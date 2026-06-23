@@ -2091,7 +2091,7 @@ async function callClaudeAPI(q) {
   const lSNR = getSNR(nums.地格) || {};
   const cSNR = getSNR(nums.總格) || {};
   const sSNR = getSNR(soul) || {};
-  const yd = getYearData(year) || {};
+  const yd = YEAR_DB_V2[String(year)] || {};
 
   // ── System Prompt：識能所角色設定 ──
   const systemPrompt = `你是識能所的覺察處方師。識能所是一個以81座標系統為基礎的自我覺察平台，系統來自姓名康熙字典筆畫數與生日數字的數學運算。
