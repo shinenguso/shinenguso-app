@@ -48,11 +48,11 @@ export default async function handler(req, res) {
           question: meta.question || '',
           report: text,
         };
-        fetch(process.env.GOOGLE_SHEET_URL, {
+        await fetch(process.env.GOOGLE_SHEET_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(sheetData),
-        }).catch(e => console.error('Sheets log error:', e));
+        });
       } catch (logErr) {
         console.error('Sheets log setup error:', logErr);
       }
