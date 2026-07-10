@@ -2402,10 +2402,10 @@ async function submitRebuttalA(){
   elB.innerHTML='<div style="display:flex;align-items:center;gap:10px;color:var(--lt-t2);font-size:13px"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span>系統正在進行二次頻率校準…</span></div>';
   cardB.scrollIntoView({behavior:'smooth',block:'start'});
   const originalReport=document.getElementById('ai-rx-text')&&document.getElementById('ai-rx-text').textContent||'';
-  const systemPrompt2=`你是識能所的覺察處方師。用戶剛收到一份根據他的頻率座標生成的「破局處方箋」，但他認為某些分析不準確，提出了抗辯。你的任務：1. 認真對待用戶的抗辯，不否定他的感受。2. 用更深層的角度解釋為什麼系統的分析可能比他的表面直覺更接近真相——尤其是「看似不準的地方往往是最核心的盲區」這個邏輯。3. 如果用戶的抗辯指出了一個確實值得重新考量的點，誠實承認，但仍要給出更深的洞察。4. 結尾不要叫用戶去找顧問，只要完整回應他的抗辯即可。語氣：直接、有溫度、敢於維持立場但不強硬、不說教。約200-300字。`;
+  const systemPrompt2=`你是識能所的覺察處方師。用戶剛收到一份根據他的頻率座標生成的「破局處方箋」，但他認為某些分析不準確，提出了抗辯。你的任務：1. 認真對待用戶的抗辯，不否定他的感受。2. 用更深層的角度解釋為什麼系統的分析可能比他的表面直覺更接近真相——尤其是「看似不準的地方往往是最核心的盲區」這個邏輯。3. 如果用戶的抗辯指出了一個確實值得重新考量的點，誠實承認，但仍要給出更深的洞察。4. 結尾不要叫用戶去找顧問，但必須包含至少一項具體、可執行的小行動方向（例如：可以先做什麼、下一步觀察什麼、怎麼調整一個具體做法），不能只用反問句或開放式留白收尾——用戶要能感覺到「看見問題，也拿到一個可以馬上做的起點」。語氣：直接、有溫度、敢於維持立場但不強硬、不說教。約200-300字。`;
   const userPrompt2=`【原始破局處方箋內容】\n${originalReport}\n\n【用戶的抗辯內容】\n「${rb}」\n\n請針對用戶的抗辯進行二次頻率校準回應。`;
   try{
-    const res=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({system:systemPrompt2,user:userPrompt2})});
+    const res=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({system:systemPrompt2,user:userPrompt2,meta:{name:(ST.name||''),soul:String(ST.soul||''),year:String(ST.year||''),coord:'('+(ST.soul||'')+','+(ST.path?((ST.path%10)||ST.soul):(ST.soul||''))+')',question:'【二次校準抗辯】'+rb}})});
     if(!res.ok)throw new Error('API error');
     const data=await res.json();
     const text=data.text||'系統暫時無法回應，請稍後再試。';
