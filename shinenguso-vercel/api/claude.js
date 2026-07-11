@@ -48,11 +48,14 @@ export default async function handler(req, res) {
           question: meta.question || '',
           report: text,
         };
-        await fetch(process.env.GOOGLE_SHEET_URL, {
+        console.log('Sheets logging: attempting to POST to', process.env.GOOGLE_SHEET_URL);
+        const sheetRes = await fetch(process.env.GOOGLE_SHEET_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(sheetData),
         });
+        const sheetResText = await sheetRes.text();
+        console.log('Sheets logging: response status =', sheetRes.status, ', body =', sheetResText);
       } catch (logErr) {
         console.error('Sheets log setup error:', logErr);
       }
