@@ -47,6 +47,12 @@ export default async function handler(req, res) {
           coord: meta.coord || '',
           question: meta.question || '',
           report: text,
+          dataType: meta.dataType || 'B2C自測',
+          client: meta.client || '',
+          useCase: meta.useCase || '',
+          targetRole: meta.targetRole || '',
+          feedback: meta.feedback || '',
+          status: meta.status || '',
         };
         console.log('Sheets logging: attempting to POST to', process.env.GOOGLE_SHEET_URL);
         const sheetRes = await fetch(process.env.GOOGLE_SHEET_URL, {
