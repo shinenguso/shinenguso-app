@@ -171,7 +171,7 @@ svg#polar{width:100%;height:100%}
 ══════════════════════════════ */
 .snr-bridge{background:var(--lt3);border:1.5px solid var(--lt-b);border-radius:14px;padding:20px 22px;margin-bottom:20px}
 .snr-title{font-family:var(--serif);font-size:clamp(16px,3.5vw,19px);font-weight:600;color:var(--lt-t);line-height:1.7;margin-bottom:16px}
-.snr-pair{display:flex;flex-direction:column;gap:14px;margin-bottom:14px}
+.snr-pair{display:flex;gap:10px;margin-bottom:14px}
 .snr-box{flex:1;border-radius:10px;padding:14px;text-align:center}
 .snr-n{background:#E8F7F2;border:1px solid #B8E0D4}
 .snr-s{background:#FDF0EE;border:1px solid #EEC8C2}
@@ -601,10 +601,10 @@ window.addEventListener('load', function(){
 
   <!-- SNR 揭露 -->
   <div class="snr-bridge fi" id="s1f0">
-    <p class="snr-title">兩把不同的尺——<br>各自量出一件事。</p>
-    <div class="snr-pair" style="flex-direction:column;gap:14px">
-      <div class="snr-box snr-n"><span class="snr-big" id="s1-npct">—</span><span class="snr-lbl">穩定度指數</span></div>
-      <div class="snr-box snr-s"><span class="snr-big" id="s1-spct">—</span><span class="snr-lbl">高壓脆弱度</span></div>
+    <p class="snr-title">你的兩個數字——<br>這就是答案。</p>
+    <div class="snr-pair">
+      <div class="snr-box snr-n"><span class="snr-big" id="s1-npct">—</span><span class="snr-lbl">常態防線</span></div>
+      <div class="snr-box snr-s"><span class="snr-big" id="s1-spct">—</span><span class="snr-lbl">高壓失控</span></div>
     </div>
     <p style="font-size:10px;color:var(--dk-t3);text-align:center;margin-top:6px">這兩個數字各自獨立評估，不是同一件事的正反面，不會、也不需要加起來是100%</p>
     <p class="snr-explain" id="s1-snr-explain">—</p>
@@ -1599,7 +1599,7 @@ function renderS1(){
   document.getElementById('s1-npct').textContent=snr.nPct+'%';
   document.getElementById('s1-spct').textContent=snr.sPct+'%';
   document.getElementById('s1-snr-explain').textContent=
-    `你的穩定度指數是${snr.nPct}%——這是你平常展現出來的沉著程度。另外，你的高壓脆弱度是${snr.sPct}%——這是壓力衝到臨界點時，你的系統有多容易整個垮掉。`;
+    `你有 ${snr.nPct}% 的時間，你是穩的——那個沉著、清醒、知道怎麼走的你。但一旦壓力超過某個點，有 ${snr.sPct}% 的機率，你會變成另一個版本的自己。（這兩個數字各自獨立計算，不是同一件事的正反面）`;
 
   // DNA
   const si=((soul-1)%9)+1;
@@ -2330,9 +2330,9 @@ function generateRx(q){
     +'外部看到的你是「'+(sd.pn||'—')+'」——'+pSNR.desc);
 
   // SNR 內耗摩擦點
-  setTxt('s3-p4-title','【識能指標】穩定度 '+snr.nPct+'% ／ 高壓脆弱度 '+snr.sPct+'%（兩者各自獨立評估）');
+  setTxt('s3-p4-title','【SNR 降壓指標】常態 '+snr.nPct+'% ／ 高壓 '+snr.sPct+'%');
   setTxt('s3-p4-desc',
-    '你的穩定度指數是'+snr.nPct+'%，代表平常展現出來的沉著程度；高壓脆弱度是'+snr.sPct+'%，代表壓力衝到臨界點時系統有多容易垮掉——這是兩個分開的面向，不是同一件事的正反面。'
+    '你有'+snr.nPct+'%的時間是穩的，但高壓臨界一到，有'+snr.sPct+'%的機率啟動失控模式。（這兩個數字各自獨立計算，不是同一件事的正反面）'
     +'你的靈魂底層（'+sSNR.trait+'）和行動路徑之間的張力，正是這個內耗的來源。');
 
   // ── SECTION 2：決策神經解剖 ──
