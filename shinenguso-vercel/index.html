@@ -171,7 +171,7 @@ svg#polar{width:100%;height:100%}
 ══════════════════════════════ */
 .snr-bridge{background:var(--lt3);border:1.5px solid var(--lt-b);border-radius:14px;padding:20px 22px;margin-bottom:20px}
 .snr-title{font-family:var(--serif);font-size:clamp(16px,3.5vw,19px);font-weight:600;color:var(--lt-t);line-height:1.7;margin-bottom:16px}
-.snr-pair{display:flex;gap:10px;margin-bottom:14px}
+.snr-pair{display:flex;flex-direction:column;gap:14px;margin-bottom:14px}
 .snr-box{flex:1;border-radius:10px;padding:14px;text-align:center}
 .snr-n{background:#E8F7F2;border:1px solid #B8E0D4}
 .snr-s{background:#FDF0EE;border:1px solid #EEC8C2}
@@ -602,7 +602,7 @@ window.addEventListener('load', function(){
   <!-- SNR 揭露 -->
   <div class="snr-bridge fi" id="s1f0">
     <p class="snr-title">兩把不同的尺——<br>各自量出一件事。</p>
-    <div class="snr-pair" style="gap:20px">
+    <div class="snr-pair" style="flex-direction:column;gap:14px">
       <div class="snr-box snr-n"><span class="snr-big" id="s1-npct">—</span><span class="snr-lbl">穩定度指數</span></div>
       <div class="snr-box snr-s"><span class="snr-big" id="s1-spct">—</span><span class="snr-lbl">高壓脆弱度</span></div>
     </div>
