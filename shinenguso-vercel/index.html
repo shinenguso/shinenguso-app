@@ -601,11 +601,12 @@ window.addEventListener('load', function(){
 
   <!-- SNR 揭露 -->
   <div class="snr-bridge fi" id="s1f0">
-    <p class="snr-title">你的兩個數字——<br>這就是答案。</p>
-    <div class="snr-pair">
-      <div class="snr-box snr-n"><span class="snr-big" id="s1-npct">—</span><span class="snr-lbl">常態防線</span></div>
-      <div class="snr-box snr-s"><span class="snr-big" id="s1-spct">—</span><span class="snr-lbl">高壓失控</span></div>
+    <p class="snr-title">兩把不同的尺——<br>各自量出一件事。</p>
+    <div class="snr-pair" style="gap:20px">
+      <div class="snr-box snr-n"><span class="snr-big" id="s1-npct">—</span><span class="snr-lbl">穩定度指數</span></div>
+      <div class="snr-box snr-s"><span class="snr-big" id="s1-spct">—</span><span class="snr-lbl">高壓脆弱度</span></div>
     </div>
+    <p style="font-size:10px;color:var(--dk-t3);text-align:center;margin-top:6px">這兩個數字各自獨立評估，不是同一件事的正反面，不會、也不需要加起來是100%</p>
     <p class="snr-explain" id="s1-snr-explain">—</p>
     <p class="snr-next">→ 那個「另一個人」是誰？繼續往下看。</p>
   </div>
@@ -784,7 +785,7 @@ window.addEventListener('load', function(){
   <!-- PDF 下載按鈕 -->
   <div id="s2-print-btn" class="fi show" style="margin-bottom:12px;text-align:right">
     <button onclick="printS2(event)" style="background:transparent;border:1px solid var(--lt-b2);border-radius:20px;padding:7px 18px;font-family:var(--mono);font-size:10px;color:var(--lt-t2);cursor:pointer;letter-spacing:.08em;transition:all .2s" onmouseover="this.style.borderColor='var(--lt-gold)';this.style.color='var(--lt-gold)'" onmouseout="this.style.borderColor='var(--lt-b2)';this.style.color='var(--lt-t2)'">
-      ↓ 下載決策神經報告 PDF
+      🖨 列印本頁／另存PDF
     </button>
   </div>
 
@@ -1598,7 +1599,7 @@ function renderS1(){
   document.getElementById('s1-npct').textContent=snr.nPct+'%';
   document.getElementById('s1-spct').textContent=snr.sPct+'%';
   document.getElementById('s1-snr-explain').textContent=
-    `你有 ${snr.nPct}% 的時間，你是穩的——那個沉著、清醒、知道怎麼走的你。但一旦壓力超過某個點，有 ${snr.sPct}% 的機率，你會變成另一個版本的自己。`;
+    `你的穩定度指數是${snr.nPct}%——這是你平常展現出來的沉著程度。另外，你的高壓脆弱度是${snr.sPct}%——這是壓力衝到臨界點時，你的系統有多容易整個垮掉。`;
 
   // DNA
   const si=((soul-1)%9)+1;
@@ -2121,7 +2122,7 @@ async function callClaudeAPI(q) {
 
 你的任務是根據系統提供的用戶完整資料庫內容，針對他提出的具體問題，產出一份完整的「個人覺察處方箋」。這份處方箋是用戶付費購買的核心產品，深度與完整度必須達到專業諮詢等級。
 
-【輸出格式】嚴格按照以下結構輸出。【重要且必須遵守】整份報告全部加總（含開頭與識能所判斷）字數不可超過1400字，這是硬性上限，寧可每段寫得精簡扼要，也不能超過——超過會導致內容被系統截斷、無法顯示完整結尾，比精簡更嚴重。
+【輸出格式】嚴格按照以下結構輸出。【重要且必須遵守】整份報告全部加總（含開頭與識能所判斷）字數不可超過1400字，這是硬性上限，寧可每段寫得精簡扼要，也不能超過——超過會導致內容被系統截斷、無法顯示完整結尾，比精簡更嚴重。【極重要】下面每個段落說明裡出現的「約XX字」「XX-XX字」等字數提示，全部都只是寫給你自己掌握篇幅用的內部參考，絕對不能出現在你實際輸出的內容裡——你的輸出裡不應該有任何一句話提到字數、字數限制、或類似「(約XX字)」這種括號註記，只能有報告本身的文字內容。
 
 （開頭，不要加標題）
 用一句話點破用戶真正在問的是什麼——不是他表面問的問題，而是藏在問題底下、他自己可能都還沒承認的那個核心焦慮或渴望。格式：「你問的是『XXX』，但從你的頻率來看，你真正在問的是：『XXX』」約30-40字。
@@ -2227,7 +2228,7 @@ ${coord.isDiag ? '（對角線純粹頻率：本源直達靈魂，高度一致�
 地格 L=${nums.地格}｜特質：${lSNR.trait}｜高壓：${lSNR.desc}
 總格 C=${nums.總格}｜特質：${cSNR.trait}｜高壓：${cSNR.desc}
 靈魂 S=${soul}｜特質：${sSNR.trait}｜高壓：${sSNR.desc}
-常態防線：${snr.nPct}%　高壓失控率：${snr.sPct}%
+穩定度指數：${snr.nPct}%　高壓脆弱度：${snr.sPct}%（這兩個數字各自獨立評估，不是互補關係，提到時不要說「加起來」或暗示兩者是同一件事的正反面）
 
 【ERROR_PATH 錯誤路徑】
 標題：${ep.title || '—'}
@@ -2329,9 +2330,9 @@ function generateRx(q){
     +'外部看到的你是「'+(sd.pn||'—')+'」——'+pSNR.desc);
 
   // SNR 內耗摩擦點
-  setTxt('s3-p4-title','【SNR 降壓指標】常態 '+snr.nPct+'% ／ 高壓 '+snr.sPct+'%');
+  setTxt('s3-p4-title','【識能指標】穩定度 '+snr.nPct+'% ／ 高壓脆弱度 '+snr.sPct+'%（兩者各自獨立評估）');
   setTxt('s3-p4-desc',
-    '你有'+snr.nPct+'%的時間是穩的，但高壓臨界一到，有'+snr.sPct+'%的機率啟動失控模式。'
+    '你的穩定度指數是'+snr.nPct+'%，代表平常展現出來的沉著程度；高壓脆弱度是'+snr.sPct+'%，代表壓力衝到臨界點時系統有多容易垮掉——這是兩個分開的面向，不是同一件事的正反面。'
     +'你的靈魂底層（'+sSNR.trait+'）和行動路徑之間的張力，正是這個內耗的來源。');
 
   // ── SECTION 2：決策神經解剖 ──
@@ -2436,7 +2437,7 @@ async function submitRebuttalA(){
   elB.innerHTML='<div style="display:flex;align-items:center;gap:10px;color:var(--lt-t2);font-size:13px"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span>系統正在進行二次頻率校準…</span></div>';
   cardB.scrollIntoView({behavior:'smooth',block:'start'});
   const originalReport=document.getElementById('ai-rx-text')&&document.getElementById('ai-rx-text').textContent||'';
-  const systemPrompt2=`你是識能所的覺察處方師。用戶剛收到一份根據他的頻率座標生成的「破局處方箋」，但他認為某些分析不準確，提出了抗辯。你的任務：1. 認真對待用戶的抗辯，不否定他的感受。2. 用更深層的角度解釋為什麼系統的分析可能比他的表面直覺更接近真相——尤其是「看似不準的地方往往是最核心的盲區」這個邏輯。3. 如果用戶的抗辯指出了一個確實值得重新考量的點，誠實承認，但仍要給出更深的洞察。4. 結尾不要叫用戶去找顧問，但必須包含至少一項具體、可執行的小行動方向（例如：可以先做什麼、下一步觀察什麼、怎麼調整一個具體做法），不能只用反問句或開放式留白收尾——用戶要能感覺到「看見問題，也拿到一個可以馬上做的起點」。語氣：直接、有溫度、敢於維持立場但不強硬、不說教。約200-300字。`;
+  const systemPrompt2=`你是識能所的覺察處方師。用戶剛收到一份根據他的頻率座標生成的「破局處方箋」，但他認為某些分析不準確，提出了抗辯。你的任務：1. 認真對待用戶的抗辯，不否定他的感受。2. 用更深層的角度解釋為什麼系統的分析可能比他的表面直覺更接近真相——尤其是「看似不準的地方往往是最核心的盲區」這個邏輯。3. 如果用戶的抗辯指出了一個確實值得重新考量的點，誠實承認，但仍要給出更深的洞察。4. 結尾不要叫用戶去找顧問，但必須包含至少一項具體、可執行的小行動方向（例如：可以先做什麼、下一步觀察什麼、怎麼調整一個具體做法），不能只用反問句或開放式留白收尾——用戶要能感覺到「看見問題，也拿到一個可以馬上做的起點」。語氣：直接、有溫度、敢於維持立場但不強硬、不說教。約200-300字。【極重要：這個字數提示只給你自己參考用，絕對不能出現在實際輸出內容裡】`;
   const userPrompt2=`【原始破局處方箋內容】\n${originalReport}\n\n【用戶的抗辯內容】\n「${rb}」\n\n請針對用戶的抗辯進行二次頻率校準回應。`;
   try{
     const res=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({system:systemPrompt2,user:userPrompt2,meta:{name:(ST.name||''),soul:String(ST.soul||''),year:String(ST.year||''),coord:'('+(ST.soul||'')+','+(ST.path?((ST.path%10)||ST.soul):(ST.soul||''))+')',question:'【二次校準抗辯】'+rb,dataType:(window._isOtherMode?'B2B對象分析':'B2C自測')}})});
