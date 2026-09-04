@@ -606,7 +606,6 @@ window.addEventListener('load', function(){
       <div class="snr-box snr-n"><span class="snr-big" id="s1-npct">—</span><span class="snr-lbl">常態防線</span></div>
       <div class="snr-box snr-s"><span class="snr-big" id="s1-spct">—</span><span class="snr-lbl">高壓失控</span></div>
     </div>
-    <p style="font-size:10px;color:var(--dk-t3);text-align:center;margin-top:6px">這兩個數字各自獨立評估，不是同一件事的正反面，不會、也不需要加起來是100%</p>
     <p class="snr-explain" id="s1-snr-explain">—</p>
     <p class="snr-next">→ 那個「另一個人」是誰？繼續往下看。</p>
   </div>
@@ -830,7 +829,7 @@ window.addEventListener('load', function(){
     <p style="font-size:11px;color:var(--lt-t3);margin-top:6px;line-height:1.6">💡 例如：「我主管開會時總是先否定我的想法，但私下又會單獨找我討論」——這種具體描述，比「我跟主管處不好」更能幫系統找到切入點。</p>
     <div style="margin-top:10px">
       <label style="font-size:11px;color:var(--lt-t3);display:block;margin-bottom:4px">如果這件事牽涉到某個人，想讓分析更貼近對方的話，可以填他的姓名（選填，只用姓名筆畫做輕量參考，不需要生日）</label>
-      <input type="text" class="inp-field" id="s2-target-name" placeholder="例如：吳貞宜" maxlength="6" style="font-size:13px"/>
+      <input type="text" class="inp-field" id="s2-target-name" placeholder="例如：王大明" maxlength="6" style="font-size:13px"/>
     </div>
     <button class="btn-lt" onclick="goS3q()" style="margin-top:12px;position:relative">
       生成覺察處方箋 →
@@ -878,12 +877,18 @@ window.addEventListener('load', function(){
   <div class="lt-card fi show" id="ai-rx-card" style="margin-bottom:16px;display:none">
     <span class="lt-lbl" style="background:linear-gradient(90deg,#7c8fff,#5ecfb0);color:#fff">✦ 頻率即時解讀</span>
     <div id="ai-rx-loading" style="text-align:center;padding:24px 0">
-      <div style="font-family:var(--mono);font-size:11px;color:var(--lt-t3);letter-spacing:.2em;margin-bottom:12px">系統交叉分析中</div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--lt-t3);letter-spacing:.2em;margin-bottom:12px" id="ai-rx-loading-title">系統交叉分析中</div>
       <div style="display:flex;justify-content:center;gap:6px">
         <span style="width:7px;height:7px;border-radius:50%;background:var(--lt-gold);animation:pulse-dot 1.2s ease-in-out infinite"></span>
         <span style="width:7px;height:7px;border-radius:50%;background:var(--lt-gold);animation:pulse-dot 1.2s ease-in-out 0.4s infinite"></span>
         <span style="width:7px;height:7px;border-radius:50%;background:var(--lt-gold);animation:pulse-dot 1.2s ease-in-out 0.8s infinite"></span>
       </div>
+      <p id="ai-rx-loading-hint" style="font-size:11px;color:var(--lt-t3);margin-top:14px;line-height:1.7"></p>
+    </div>
+    <div id="ai-rx-module-soon" style="display:none;text-align:center;padding:32px 16px">
+      <div style="font-size:28px;margin-bottom:10px">🛠️</div>
+      <p style="font-family:var(--serif);font-size:15px;color:var(--lt-t);font-weight:700;margin-bottom:8px">這個模組還在建置中</p>
+      <p style="font-size:12px;color:var(--lt-t3);line-height:1.7">請稍後再回來體驗，目前只有「A・職場突破」開放測試。</p>
     </div>
     <div id="ai-rx-content" style="display:none">
       <p style="font-family:var(--serif);font-size:13px;color:var(--lt-t);line-height:1.9;white-space:pre-wrap" id="ai-rx-text"></p>
@@ -962,7 +967,7 @@ window.addEventListener('load', function(){
 如果這件事牽涉到某個人（主管、同事、客戶、合作對象……），可以直接寫出他的名字，並具體描述他平常的行為模式、或你們互動時卡住的狀況——寫得越具體，系統給的切入角度會越準。" rows="6"></textarea>
     <div style="margin-top:10px">
       <label style="font-size:11px;color:var(--lt-t3);display:block;margin-bottom:4px">如果這件事牽涉到某個人，想讓分析更貼近對方的話，可以填他的姓名（選填，只用姓名筆畫做輕量參考，不需要生日）</label>
-      <input type="text" class="inp-field" id="s4-target-name" placeholder="例如：吳貞宜" maxlength="6" style="font-size:13px"/>
+      <input type="text" class="inp-field" id="s4-target-name" placeholder="例如：王大明" maxlength="6" style="font-size:13px"/>
     </div>
     <button class="btn-lt" onclick="goS3s4()" style="margin-top:10px">生成覺察處方箋 + 抗辯 →</button>
   </div>
@@ -2212,17 +2217,25 @@ function buildModuleASystemPrompt(){
 }
 
 async function callModuleAPI(moduleType){
-  if(moduleType!=='A'){
-    alert('這個模組還在準備中，目前只有「A·職場突破」可以體驗，敬請期待！');
-    return;
-  }
-  if(!ST||!ST.soul) return;
   const card=document.getElementById('ai-rx-card');
   const loading=document.getElementById('ai-rx-loading');
   const rxContent=document.getElementById('ai-rx-content');
   const rxError=document.getElementById('ai-rx-error');
+  const soonBox=document.getElementById('ai-rx-module-soon');
   if(!card||!loading||!rxContent||!rxError) return;
+
+  if(moduleType!=='A'){
+    card.style.display='block'; loading.style.display='none'; rxContent.style.display='none'; rxError.style.display='none';
+    if(soonBox) soonBox.style.display='block';
+    return;
+  }
+  if(soonBox) soonBox.style.display='none';
+  if(!ST||!ST.soul) return;
   card.style.display='block'; loading.style.display='block'; rxContent.style.display='none'; rxError.style.display='none';
+  const loadTitle=document.getElementById('ai-rx-loading-title');
+  const loadHint=document.getElementById('ai-rx-loading-hint');
+  if(loadTitle) loadTitle.textContent='正在為你產出完整職場突破報告';
+  if(loadHint) loadHint.textContent='這份報告篇幅較長，通常需要30～60秒，請耐心等候，不要重新整理或關閉頁面';
   const rebuttalBtn=document.getElementById('rebuttal-btn');
   if(rebuttalBtn) rebuttalBtn.style.display='none'; // 模組報告不提供二次校準
 
@@ -2291,6 +2304,12 @@ async function callClaudeAPI(q) {
   loading.style.display = 'block';
   rxContent.style.display = 'none';
   rxError.style.display = 'none';
+  const soonBox0 = document.getElementById('ai-rx-module-soon');
+  if (soonBox0) soonBox0.style.display = 'none';
+  const loadTitle0 = document.getElementById('ai-rx-loading-title');
+  const loadHint0 = document.getElementById('ai-rx-loading-hint');
+  if (loadTitle0) loadTitle0.textContent = '系統交叉分析中';
+  if (loadHint0) loadHint0.textContent = '通常需要10～20秒，請稍候';
 
   // 安全取值
   const soul = ST.soul || 1;
