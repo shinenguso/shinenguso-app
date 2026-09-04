@@ -843,6 +843,7 @@ window.addEventListener('load', function(){
       <div class="mod-card" onclick="selMod(this,'C')"><div class="mod-name">C · 關係破局</div><div class="mod-d">人際卡點、互動模式</div></div>
       <div class="mod-card" onclick="selMod(this,'D')"><div class="mod-name">D · 健康調頻</div><div class="mod-d">身心信號、能量管理</div></div>
     </div>
+    <button class="btn-lt" id="s2-mod-btn" onclick="goS3mod()" disabled style="margin-top:10px;width:100%">查看選定模組報告 →</button>
     <button class="btn-line" onclick="goLine()">💬 &nbsp;一對一深度陪跑（LINE）</button>
   </div>
 </div>
@@ -1464,7 +1465,7 @@ function goLineWithQ(){
   const msg='【識能所 覺察處方箋申請】'+'\n\n姓名：'+name+'\n頻率座標：'+coord+' · 流年'+year+'號'+'\n\n我的問題：\n'+q+'\n\n請在24小時內傳送我的個人覺察處方箋，謝謝。';
   window.open('https://line.me/R/oaMessage/@059yfwaw/?'+encodeURIComponent(msg),'_blank');
 }
-function selMod(el,m){window._mod=m;document.querySelectorAll('#s-s2 .mod-card').forEach(c=>c.classList.remove('active'));el.classList.add('active');}
+function selMod(el,m){window._mod=m;document.querySelectorAll('#s-s2 .mod-card').forEach(c=>c.classList.remove('active'));el.classList.add('active');const btn=document.getElementById('s2-mod-btn');if(btn)btn.disabled=false;}
 function selModS4(el,m){window._mod=m;document.querySelectorAll('#s-s4 .mod-card').forEach(c=>c.classList.remove('active'));el.classList.add('active');document.getElementById('s4-mod-btn').disabled=false;}
 
 // ══════════════════════════════
