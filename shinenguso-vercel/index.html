@@ -1166,6 +1166,46 @@ function calcYear(birth){
   return s||9;
 }
 
+// 流月計算：個人流年 + 當月月份數字，化簡至個位數
+// 公式來源：識能所內部SOP設計（艾略特波浪理論 × 生命靈數流年）
+function calcFlowMonth(personalYear, month){
+  let s = personalYear + month;
+  while(s>9) s=[...String(s)].map(Number).reduce((a,b)=>a+b,0);
+  return s||9;
+}
+
+// 流月數字對照表：識能所核心商業轉譯 × 氣候意象 × 艾略特波浪相位 × 戰略意義
+// 資料來源：識能所內部SOP「流年及月.xlsx」流月氣象與波浪戰略矩陣（最終定案版）
+const FLOW_MONTH_DB={
+  1:{label:'造局與拓荒',role:'創業家／新事業開發',wave:'波浪1（初升啟動）',
+     climate:'春雷初響——萬物蟄伏的死寂被瞬間打破，新氣象來臨。',
+     strategy:'市場出現新賽道或新需求，適合大張旗鼓宣告主權、啟動全新專案或強勢表態。'},
+  2:{label:'斡旋與資源縫合',role:'公關外交／戰略結盟',wave:'波浪2（拉回縫合）',
+     climate:'晨霧微雨——視線模糊，但具備極高滲透力與滋潤感。',
+     strategy:'大動作強攻會迷失方向，適合退居幕後，透過私下滲透、結盟與軟性談判進行利益交換。'},
+  3:{label:'品牌擴散與敏捷創新',role:'行銷總監／品牌發言人',wave:'波浪3（主升擴散）',
+     climate:'艷陽高風——傳播力最強、氣氛最熱烈且容易煽動的氣候。',
+     strategy:'能輕易引發市場關注與聲量，適合對外發佈產品、演講，但需嚴防話語被過度解讀引發公關危機。'},
+  4:{label:'SOP建置與風險控管',role:'營運長COO／稽核',wave:'波浪4（盤整築底）',
+     climate:'無風冷晝——氣候極度穩定、甚至停滯，沒有任何波動。',
+     strategy:'外在失去擴張風向，盲目進攻只會白費力氣，最適合盤點現金流、優化內部流程與修補防護網。'},
+  5:{label:'破壞式創新與危機轉型',role:'危機處理專家／變革推手',wave:'波浪5（末升動盪）',
+     climate:'破壞性颶風——既有秩序與認知被強風連根拔起，極度混亂。',
+     strategy:'市場劇烈洗牌，死守舊規則必亡，必須保持極高彈性，準備隨時Pivot（軸轉），順風者飛天。'},
+  6:{label:'生態系培育與內部凝聚',role:'人資長CHRO／客戶成功',wave:'波浪A（初跌修復）',
+     climate:'和煦春風——颶風過後的溫和氣候，適合萬物休養生息。',
+     strategy:'經歷變動後，最適合進行生態系復育：修復受損的團隊情緒、安撫重要客戶、優化分潤機制以留才。'},
+  7:{label:'底層邏輯重構與數據深潛',role:'研發長CTO／數據分析師',wave:'波浪B（反彈深潛）',
+     climate:'大雪封山——嚴冬降臨，外在資源與視線全面凍結，寸步難行。',
+     strategy:'外面沒有資源可拿，強烈建議絕對斷網、退回基地，不做重大決策，專注研發專利與戰略覆盤。'},
+  8:{label:'資本槓桿與權力收割',role:'財務長CFO／執行長',wave:'波浪C（波峰收割）',
+     climate:'金秋烈日——果實成熟、資源全數顯化、能量最強的極致氣候。',
+     strategy:'能量絕對波峰，所有隱藏的資源都可變現，適合獅子大開口、強勢談判並拿下應得的權力與版圖。'},
+  9:{label:'宏觀願景與生命週期收尾',role:'董事會／永續長',wave:'落底清算（週期末）',
+     climate:'秋風掃落葉——氣候進入生命週期尾聲，萬物凋零準備過冬。',
+     strategy:'必須無情地砍掉不盈利的專案、清理有毒的合夥或人際關係，斷尾求生，清空艙位等待下一次春雷。'},
+};
+
 function calcSNRIndex(P,L,C,soul){
   const p=getSNR(P),l=getSNR(L),c=getSNR(C),s=getSNR(soul);
   const layers=[p,l,c,s];
@@ -1323,7 +1363,9 @@ function goS3q(){
 }
 function goS3mod(){
   if(!window._mod){alert('請先選擇模組');return;}
-  _goS3(`我想了解${window._mod}模組的深度分析`);
+  showScreen('s-s3');
+  document.getElementById('s3-q-display').textContent=`「${window._mod}·模組深度報告」`;
+  callModuleAPI(window._mod);
 }
 function goS3s4(){
   const q=document.getElementById('s4-q').value.trim();
@@ -2072,6 +2114,168 @@ function buildSysPrompt(){
 
 // ══ Claude API 串接 ══
 const CLAUDE_API_KEY = 'YOUR_API_KEY_HERE';
+
+// ══ 功能模組報告（A·職場突破，system prompt依《識能所功能模組報告撰寫規格書》第一版設計）══
+function buildModuleFlowMonthTable(personalYear){
+  let rows = '';
+  for(let m=1;m<=12;m++){
+    const fm = calcFlowMonth(personalYear, m);
+    const info = FLOW_MONTH_DB[fm] || {};
+    rows += `${m}月：流月${fm}號・${info.label||'—'}（${info.climate||''}）｜商業意義：${info.strategy||''}\n`;
+  }
+  return rows;
+}
+
+function buildModuleASystemPrompt(){
+  return `你是識能所的高階商戰顧問，正在為用戶產出一份「職場突破360度全景報告」——這是用戶付費解鎖的核心產品，深度必須達到專業顧問等級，篇幅不設字數上限，內容價值與完整度優先於精簡（這一點跟提問框的字數紀律不同，不要套用字數限制的邏輯）。
+
+【輸出格式，嚴格依序，缺一不可】
+
+▍頁首
+解碼對象：[姓名]
+核心參數：靈魂定序[路徑組合]（[核心特質白話稱號]）
+時空坐標：2026當前個人流年[流年號]號（[流年商業轉譯]）
+能量位階：內在能量高頻波峰期 疊加 外在總經低速增長／高度不確定並存期
+
+▍前言：天時、地利、人和的動態二維矩陣
+四段式，缺一不可：
+第一段：「您的底層核心是由[路徑組合]（[核心特質]）所驅動」開頭，說明這個座標天生內建的視角/能力。
+第二段：「在時空坐標上，2026年您的個人流年正處於[流年號]號年」開頭，說明這個流年號的能量主題。
+第三段：把「靈魂驅動的本能」跟「今年流年的能量方向」放在一起，講清楚兩者是疊加還是衝突，具體點出這個對撞會激發出什麼機會或挑戰。涉及總體經濟現況時，只能用「低速增長、高度不確定性並存」這類不特指確切時間點的規律性描述，不能斷言具體數字或事件。
+第四段（固定）：「接下來，我們將從三個核心維度、八大戰場，為您徹底解開職涯的破局路徑。」
+
+▍第一層：【生存與掠奪層】—— 數字、賽道與位階的正面對決
+層級引言（固定）：「本層級專注於解決您最迫切的世俗卡關：去哪裡、怎麼爬、如何拿到實質的利益與數字。」
+
+01・轉職與賽道切換
+一句話破題（格式：「身為[行動面具pn]，您在考慮換場時最致命的摩擦點，在於___」）
+診斷段落（自訂標籤，例如「痛點X光」）：結合天生盲區，推論轉職猶豫的心理根源。【重要】必須誠實區分：卡點可能是心理慣性（例如害怕撕破臉），也可能是系統看不到的現實考量（收入穩定度、房貸房租、家庭支出、轉職過渡期的現金流）。兩者性質不同，不能只用心理特質一概而論，必須明確提出讓讀者自己區分。
+破局段落（自訂標籤，例如「破局戰略」）：結合今年流年能量給方向判斷，並針對「心理卡點」與「現實卡點」分別給出不同的具體建議。
+
+02・升遷與向上管理
+一句話破題
+診斷段落（例如「潛在盲區」）：推論這個人在被主管理解、被看見這件事上的天生障礙，需具體連結行動面具與真實需求的落差。
+破局段落（例如「破局戰術」）：給出具體的向上管理戰術。
+
+03・績效突破與業績轉化
+一句話破題
+【重要格式】診斷段落固定標籤為「運勢解碼」：用「2026年您處於[流年號]號個人年的高頻波峰期」開頭，說明今年的資源/財富磁場特質，並指出如果業績卡關，很可能不是能力問題而是能量方向錯放。
+【重要格式】破局段落固定標籤為「破局戰術」，且必須是編號清單（1. 2.），不能是一整段散文，每條戰術要具體到「做什麼」，並結合天賦與今年流年槓桿。
+
+▍第二層：【戰術與謀略層】—— 人際、政治與團隊的控局藝術
+層級引言（固定）：「當世俗數字穩固後，您需要掌握在組織內借力使力、操控全局的政治工具。」
+
+04・人際與政治
+一句話破題
+診斷段落（例如「互動能量解讀」）：推論這個人在辦公室政治裡最大的風險模式。
+【嚴格禁止】破局段落絕對不能使用「貴人」「小人」「幾號跟幾號合不合」這類命理配對詞彙——這類詞彙會製造出「有一套判斷規則存在」的錯誤期待。必須直接給一個不需要任何命理依據、使用者當下就能自己觀察驗證的具體判斷方式（例如：觀察對方在被明確表達不同意見時，是收回主張還是立刻施壓要求妥協）。
+
+05・團隊管理與領導者覺醒
+一句話破題
+診斷段落（例如「管理盲點」）：結合天生盲區，推論這個人帶團隊時最容易累死自己或卡住的模式。
+破局段落（例如「領導破局點」）：給出具體的領導風格調整方向。
+
+▍第三層：【高維與靈魂層】—— 創業、內耗與終極價值的校準
+層級引言（固定）：「這是識能所系統的深水區。解決您靈魂深處的時代焦慮，確保您在世俗奪取物質時，內在系統依然滿血穩定。」
+
+06・創業潛能與自立門戶
+一句話破題
+診斷段落（例如「創業密碼診斷」）：【重要】創業型態必須根據這個人實際的職涯護城河內容去推導這個人適合的商業模式本質（例如：擅長縫合資源的人適合仲介/媒合型；擅長系統建構的人適合SOP/工具型；擅長表達的人適合個人品牌型），並結合今年流年判斷適合的資源投入節奏（輕資產快速變現、或有本錢做長期經營）。禁止不分青紅皂白套用「個人品牌/獨立顧問 vs 傳統重資產」這組固定二分模板——只有在這個座標真的適用時才能這樣寫。
+破局段落（例如「最佳落地路徑」）：給出具體的創業模式建議，並從天賦詞庫裡找出這個人適合尋找的互補型合夥人特質。
+
+07・核心價值與時代焦慮
+一句話破題
+診斷段落（例如「核心價值的重新定義」）：結合天賦，說明AI能取代的是什麼微觀層面的執行，不能取代的是這個人的核心能力本質。
+破局段落（例如「消除焦慮指南」）：給出具體的定位建議。
+
+08・倦怠與能量內耗
+一句話破題
+診斷段落（例如「耗竭訊號解讀」）：【重要】必須直接使用這個人真實的六維調頻資料（本源與手段的五行關係，例如「土生金」「木剋土」等），解釋這個座標特別容易耗損的結構性原因，不能用泛用的疲勞描述取代。
+破局段落（例如「專屬回血處方」）：【重要】必須直接抓這個人真實的physical/psych調頻內容轉譯成具體動作，不能用「去山頂看海」這類通用建議取代。
+
+▍全年流月戰略地圖
+先寫一句銜接句，把「個人流月能量」跟「外部環境」的互動框架點出來，不能讓表格憑空出現。
+接著列出12個月，格式：「[月份]｜流月[數字]・[識能所商業轉譯]｜這個月外部環境如何配合或牴觸這股能量的具體描述」——內容必須是「外部環境如何呼應」的描述，不是單純複述資料庫的商業意義原文。
+必須明確標出與個人流年號完全對頻的月份（用粗體或特殊標記），但結尾不能只靠這一個月撐起節奏感。
+
+▍破局戰略洞察（結尾）
+【重要】不要重複解釋「靈魂驅動vs流年課題」的衝突本質——前面段落已經說明過，這裡重複會顯得累贅。直接給總結性行動建議。
+必須從全年流月地圖裡挑出2-3個代表性月份（不只是收割月，也可包含鋪路月、盤點月），組成一個簡短的時間行動節奏。
+結尾最後自然帶出兩層轉換引流，順序固定：先提問框（門檻較低，針對眼前具體卡點），再識能所一對一深度陪跑計畫（門檻較高，完整陪跑）。語氣需自然銜接前文，不能像硬廣告。
+
+【嚴格禁止】
+- 不做真實投資理財的具體標的建議
+- 不使用「加起來100%」這類暗示互補的語氣描述任何百分比
+- 流月的「波浪相位」只是借用比喻，不能寫成任何形式的股市/金融市場預測
+- 每一句話都要具體連結到這個人的靈魂/天賦/流年資料，不能是可以套用在任何人身上的通用職場建議
+- 不能出現「約XX字」這類字數提示在實際輸出裡`;
+}
+
+async function callModuleAPI(moduleType){
+  if(moduleType!=='A'){
+    alert('這個模組還在準備中，目前只有「A·職場突破」可以體驗，敬請期待！');
+    return;
+  }
+  if(!ST||!ST.soul) return;
+  const card=document.getElementById('ai-rx-card');
+  const loading=document.getElementById('ai-rx-loading');
+  const rxContent=document.getElementById('ai-rx-content');
+  const rxError=document.getElementById('ai-rx-error');
+  if(!card||!loading||!rxContent||!rxError) return;
+  card.style.display='block'; loading.style.display='block'; rxContent.style.display='none'; rxError.style.display='none';
+  const rebuttalBtn=document.getElementById('rebuttal-btn');
+  if(rebuttalBtn) rebuttalBtn.style.display='none'; // 模組報告不提供二次校準
+
+  const soul=ST.soul||1, path=ST.path||soul, year=ST.year||1;
+  const sd=ST.sd||{}, name=ST.name||'';
+  const coord=ST.coord||{isDiag:false};
+  const pathUnit = coord.isDiag ? soul : (path%10)||soul;
+
+  const systemPrompt = buildModuleASystemPrompt();
+  const userPrompt = `【這個人的完整資料】
+姓名：${name}
+靈魂號：${soul}｜路徑：${path}｜路徑個位：${pathUnit}
+靈魂稱號：${sd.sn||'—'}｜行動面具：${sd.pn||'—'}
+三大天賦：${(sd.talents||[]).join('；')}
+職涯護城河：${sd.career||'—'}
+財富變現槓桿：${sd.wealth||'—'}
+天生盲區：${sd.blind||'—'}
+內外摩擦特徵：${sd.friction||'—'}
+摩擦化解策略：${sd.solution||'—'}
+六維調頻—生理：${sd.physical||'—'}
+六維調頻—心理：${sd.psych||'—'}
+今年個人流年：${year}號
+
+【全年12個月流月數字與商業轉譯（供你撰寫「全年流月戰略地圖」使用，須改寫成外部環境呼應的描述，不能照抄）】
+${buildModuleFlowMonthTable(year)}
+
+請依照system prompt的完整格式，輸出這個人的「A·職場突破360度全景報告」。`;
+
+  try{
+    const res=await fetch('/api/claude',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        system:systemPrompt, user:userPrompt, max_tokens:8000,
+        meta:{ name:name, soul:String(soul), year:String(year), coord:'('+soul+','+pathUnit+')', question:'A·職場突破模組報告', dataType:'B2C模組報告' }
+      })
+    });
+    if(!res.ok) throw new Error('API error '+res.status);
+    const data=await res.json();
+    const text=data.text||'';
+    loading.style.display='none';
+    const rxText=document.getElementById('ai-rx-text');
+    let formatted = text
+      .replace(/\*\*(.+?)\*\*/g, '<strong style="color:var(--lt-gold)">$1</strong>')
+      .replace(/▍(.+)/g, '<div style="font-family:var(--mono);font-size:9px;color:var(--lt-gold);letter-spacing:.2em;margin:16px 0 4px">▍$1</div>')
+      .replace(/^(0[1-8]・.+)$/gm, '<div style="font-size:14px;font-weight:700;color:var(--lt-t);margin:14px 0 6px">$1</div>');
+    if(rxText) rxText.innerHTML=formatted;
+    rxContent.style.display='block';
+  }catch(err){
+    console.error('Module API error:', err);
+    loading.style.display='none';
+    rxError.style.display='block';
+  }
+}
 
 async function callClaudeAPI(q) {
   // 防護：確保 ST 存在
