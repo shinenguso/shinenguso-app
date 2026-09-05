@@ -2236,7 +2236,7 @@ async function callModuleAPI(moduleType){
   const loadTitle=document.getElementById('ai-rx-loading-title');
   const loadHint=document.getElementById('ai-rx-loading-hint');
   if(loadTitle) loadTitle.textContent='正在為你產出完整職場突破報告';
-  if(loadHint) loadHint.textContent='這份報告篇幅較長，通常需要30～60秒，請耐心等候，不要重新整理或關閉頁面';
+  if(loadHint) loadHint.textContent='這份報告內容深度較高，通常需要約3～4分鐘才能完整產出，這是為了確保你拿到的是完整深度的報告——請耐心等候，不要重新整理或關閉頁面';
   const rebuttalBtn=document.getElementById('rebuttal-btn');
   if(rebuttalBtn) rebuttalBtn.style.display='none'; // 模組報告不提供二次校準
 
@@ -2269,7 +2269,7 @@ ${buildModuleFlowMonthTable(year)}
     const res=await fetch('/api/claude',{
       method:'POST', headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
-        system:systemPrompt, user:userPrompt, max_tokens:8000,
+        system:systemPrompt, user:userPrompt, max_tokens:12000,
         meta:{ name:name, soul:String(soul), year:String(year), coord:'('+soul+','+pathUnit+')', question:'A·職場突破模組報告', dataType:'B2C模組報告' }
       })
     });
