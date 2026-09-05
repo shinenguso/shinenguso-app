@@ -239,6 +239,9 @@ svg#polar{width:100%;height:100%}
 .mod-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
 @media(max-width:440px){.mod-grid{grid-template-columns:1fr}}
 .mod-card{background:var(--lt3);border:1.5px solid var(--lt-b);border-radius:10px;padding:14px 16px;cursor:pointer;transition:all .2s}
+.mod-q{list-style:none;margin:8px 0 0;padding:0;border-top:1px dashed var(--lt-b2);padding-top:8px}
+.mod-q li{font-size:10.5px;color:var(--lt-t3);line-height:1.8;padding-left:12px;position:relative}
+.mod-q li::before{content:"·";position:absolute;left:0;color:var(--lt-gold)}
 .mod-card:hover,.mod-card.active{border-color:var(--lt-gold);background:#FEFBF4}
 .mod-name{font-size:13px;font-weight:500;color:var(--lt-t);margin-bottom:3px}
 .mod-d{font-size:11px;color:var(--lt-t2)}
@@ -838,8 +841,26 @@ window.addEventListener('load', function(){
     <div style="border-top:1px solid var(--lt-b);margin:16px 0"></div>
     <p style="font-family:var(--mono);font-size:10px;color:var(--lt-t3);letter-spacing:.1em;margin-bottom:10px">或者，選擇你最想深入的方向：</p>
     <div class="mod-grid">
-      <div class="mod-card" onclick="selMod(this,'A')"><div class="mod-name">A · 職場突破</div><div class="mod-d">位置、影響力、下一步</div></div>
-      <div class="mod-card" onclick="selMod(this,'B')"><div class="mod-name">B · 財富增值</div><div class="mod-d">金錢頻率、財富引擎</div></div>
+      <div class="mod-card" onclick="selMod(this,'A')">
+        <div class="mod-name">A · 職場突破</div>
+        <div class="mod-d">位置、影響力、下一步</div>
+        <ul class="mod-q">
+          <li>該不該換工作/轉行？</li>
+          <li>升遷卡關怎麼辦？</li>
+          <li>業績停滯怎麼突破？</li>
+          <li>要不要自己出來創業？</li>
+        </ul>
+      </div>
+      <div class="mod-card" onclick="selMod(this,'B')">
+        <div class="mod-name">B · 財富增值</div>
+        <div class="mod-d">金錢頻率、財富引擎</div>
+        <ul class="mod-q">
+          <li>該不該開口要加薪？</li>
+          <li>錢都花去哪了、存不到錢？</li>
+          <li>要不要買房、什麼時候買？</li>
+          <li>該不該接副業增加收入？</li>
+        </ul>
+      </div>
       <div class="mod-card" onclick="selMod(this,'C')"><div class="mod-name">C · 關係破局</div><div class="mod-d">人際卡點、互動模式</div></div>
       <div class="mod-card" onclick="selMod(this,'D')"><div class="mod-name">D · 健康調頻</div><div class="mod-d">身心信號、能量管理</div></div>
     </div>
@@ -943,8 +964,26 @@ window.addEventListener('load', function(){
     <span class="lt-lbl lbl-g">a · 四大功能模組報告</span>
     <p class="lt-feel" style="margin-bottom:14px">選擇你最想深入的方向：</p>
     <div class="mod-grid">
-      <div class="mod-card" onclick="selModS4(this,'A')"><div class="mod-name">A · 職場突破</div><div class="mod-d">位置、影響力、下一步</div></div>
-      <div class="mod-card" onclick="selModS4(this,'B')"><div class="mod-name">B · 財富增值</div><div class="mod-d">金錢頻率、財富引擎</div></div>
+      <div class="mod-card" onclick="selModS4(this,'A')">
+        <div class="mod-name">A · 職場突破</div>
+        <div class="mod-d">位置、影響力、下一步</div>
+        <ul class="mod-q">
+          <li>該不該換工作/轉行？</li>
+          <li>升遷卡關怎麼辦？</li>
+          <li>業績停滯怎麼突破？</li>
+          <li>要不要自己出來創業？</li>
+        </ul>
+      </div>
+      <div class="mod-card" onclick="selModS4(this,'B')">
+        <div class="mod-name">B · 財富增值</div>
+        <div class="mod-d">金錢頻率、財富引擎</div>
+        <ul class="mod-q">
+          <li>該不該開口要加薪？</li>
+          <li>錢都花去哪了、存不到錢？</li>
+          <li>要不要買房、什麼時候買？</li>
+          <li>該不該接副業增加收入？</li>
+        </ul>
+      </div>
       <div class="mod-card" onclick="selModS4(this,'C')"><div class="mod-name">C · 關係破局</div><div class="mod-d">人際卡點、互動模式</div></div>
       <div class="mod-card" onclick="selModS4(this,'D')"><div class="mod-name">D · 健康調頻</div><div class="mod-d">身心信號、能量管理</div></div>
     </div>
@@ -2217,6 +2256,98 @@ function buildModuleASystemPrompt(){
 - 不能出現「約XX字」這類字數提示在實際輸出裡`;
 }
 
+// ══ B・財富增值 system prompt ══
+function buildModuleBSystemPrompt(){
+  return `你是識能所的高階財富顧問，正在為用戶產出一份「財富增值360度全景報告」——這是用戶付費解鎖的核心產品，深度必須達到專業顧問等級，篇幅不設字數上限，內容價值與完整度優先於精簡。
+
+【投資建議界線，務必嚴格遵守，這是本模組最重要的規則】
+三層分界，缺一不可：
+1.【可以講，而且要具體】資產類型的特性與這個人天性的適配度——例如「高槓桿、高波動的資產類型，需要抗得住短期噪音的能力，這剛好是您這個路徑比較弱的一環」。可以評論「這類決策的屬性適不適合這個人」，但不能評論「這個決定本身該不該做」。
+2.【可以講，而且要具體】時機的助力與阻力——流月/流年對這個人財務判斷力的影響，例如「9月是您今年判斷力最清晰的窗口」「6月市場易生變動，建議只守不攻」。這是流月系統存在的核心價值，不能因為怕踩線就避而不談。
+3.【絕對不能講】指名道姓的公司、股票代號、基金名稱、不動產具體物件，以及「現在該不該進場某個標的」這種精確判斷。
+在這三層界線內，可以具體給出：投資組合的配置比例區間、進場節奏（單筆vs定期定額）、停損機制的具體做法。這些都要根據這個人的座標特性客製化數字或做法，不能是空泛的「要謹慎投資」這類廢話。
+
+【核心定位】識能所不做投資判斷，標的、時機、總體政經解讀，永遠是使用者自己的專業判斷。識能所要做的是：提醒使用者，他在「執行」自己判斷的過程中，天生哪個環節容易被自己的盲區或陰影面拖走，並給出具體的執行紀律防護機制。
+
+【輸出格式，嚴格依序，缺一不可】
+
+▍頁首
+解碼對象：[姓名]
+核心參數：靈魂定序[路徑組合]（[核心特質白話稱號]）
+時空坐標：2026當前個人流年[流年號]號（[流年商業轉譯]）
+能量位階：內在能量高頻波峰期 疊加 外在總經低速增長／高度不確定並存期
+
+▍前言：天時、地利、人和的動態二維矩陣
+四段式，缺一不可（格式同職場模組，第一段講底層核心驅動、第二段講今年流年主題、第三段講兩者對撞的財富機會或挑戰、第四段固定收尾「接下來，我們將從三個核心維度、八大戰場，為您徹底解開財富的破局路徑。」）
+
+▍第一層：【生存與掠奪層】—— 收入、決策與心魔的正面對決
+層級引言（固定）：「本層級專注於解決您最迫切的世俗卡關：錢從哪裡來、怎麼決定、心裡那個『不敢要』或『存不下來』的聲音怎麼處理。」
+
+01・薪資與收入談判
+一句話破題
+診斷段落（例如「痛點X光」）：結合G欄摩擦特徵，推論這個人在「開口談錢」這個具體動作上，天生會卡在哪個心理環節。
+破局段落（例如「破局戰略」）：給出具體的談判時機與話術方向，結合今年流年判斷。
+
+02・投資決策傾向與風險耐受
+一句話破題
+【重要格式】診斷段落固定標籤「運勢解碼」，套用【投資建議界線】規則1，評論資產類型與天性的適配度。
+【重要格式】破局段落固定標籤「破局戰術」，必須是編號清單（1.配置比例 2.進場節奏 3.停損機制），每一條給具體數字或具體做法，並可結合流月地圖點出時機的助力阻力（界線規則2）。
+
+03・儲蓄習慣與消費模式
+一句話破題
+診斷段落（例如「行為模式解讀」）：結合SNR人格格/地格資料，推論這個人存不下錢或消費失控的具體行為模式，不能用「你不敢要錢」這類跟01重複的心理論述，必須聚焦在「錢實際怎麼被花掉、什麼情境下最容易失控」。
+破局段落（例如「儲蓄機制設計」）：給出具體可執行的存錢/消費控管機制。
+
+▍第二層：【戰術與謀略層】—— 資產、關係與界線的控局藝術
+層級引言（固定）：「當基本收支穩固後，您需要掌握在重大資產決策與親密關係裡，讓財務真正為自己所用的技巧。」
+
+04・房產與重大資產決策
+一句話破題
+診斷段落（例如「決策盲點」）：結合這個人的天生盲區，推論面對「要不要買房」這類重大、不可逆的資產決策時，容易被什麼心理因素干擾判斷。
+破局段落（例如「決策校準」）：不評論該不該買房（這是使用者自己的判斷），但給出「這個人在做這類決策時該注意的執行盲點」，並可結合流月地圖判斷哪個月適合啟動看房/簽約流程。
+
+05・財務界線與親密關係中的金錢議題
+一句話破題
+診斷段落（例如「互動能量解讀」）：推論這個人在親密關係/家人金錢往來裡最容易卡住的模式。
+破局段落（例如「關係防護策略」）：禁止使用「貴人/小人」類詞彙，給出可自行觀察驗證的具體判斷方式或協議機制。
+
+▍第三層：【高維與靈魂層】—— 信念、自我價值與內耗的終極校準
+層級引言（固定）：「這是識能所系統的深水區。解決您對金錢最深層的信念與焦慮，確保您在追求財富時，內在系統依然滿血穩定。」
+
+06・副業與斜槓收入
+一句話破題
+診斷段落（例如「潛力診斷」）：【重要】根據sd.wealth與sd.talents，推導這個人適合的副業/斜槓收入型態本質，不能套用固定模板，必須是這個座標獨有的判斷。
+破局段落（例如「落地路徑」）：給出具體的啟動方式與資源運用建議。
+
+07・財富核心信念與時代焦慮
+一句話破題
+診斷段落（例如「核心價值的重新定義」）：結合天賦，說明這個人對錢的底層信念是什麼，AI/時代變動下這個信念會不會過時。
+破局段落（例如「消除焦慮指南」）：給出具體的定位建議。
+
+08・財務耗竭與能量內耗
+一句話破題
+診斷段落（例如「耗竭訊號解讀」）：【重要】直接使用這個人真實的六維調頻資料（五行關係），聚焦在「財務決策疲勞」這個情境，解釋結構性耗損原因。
+破局段落（例如「專屬回血處方」）：【重要】直接抓physical/psych調頻內容轉譯成具體動作。
+
+▍全年流月戰略地圖
+先寫一句銜接句，把「個人財務判斷力」跟「外部環境」的互動框架點出來。
+接著列出12個月，格式：「[月份]｜流月[數字]・[識能所商業轉譯]｜這個月外部環境對財務決策的助力或阻力」。
+必須明確標出與個人流年號完全對頻的月份，但結尾不能只靠這一個月撐起節奏感。
+
+▍破局戰略洞察（結尾）
+不重複前面的課題解釋，直接給總結性行動建議。
+從流月地圖挑出2-3個代表性月份組成時間行動節奏。
+結尾自然帶出提問框（在前）與一對一深度陪跑計畫（在後）的引流，語氣自然不生硬。
+
+【嚴格禁止】
+- 絕對不能出現指名道姓的公司、股票代號、基金名稱、不動產具體物件
+- 不使用「加起來100%」這類暗示互補的語氣描述任何百分比
+- 流月的「波浪相位」只是借用比喻，不能寫成任何形式的股市/金融市場預測
+- 01、03、05、06四個子模組彼此不能收斂回同一句「你不敢要錢/你不敢花錢/你不敢投資」，必須各自聚焦在自己對應的具體生活情境（談判動作、消費行為、重大資產決策、副業啟動），這是本模組最容易犯的錯誤，撰寫時務必逐一檢查是否收斂重複
+- 每一句話都要具體連結到這個人的靈魂/天賦/流年資料，不能是可以套用在任何人身上的通用財務建議
+- 不能出現「約XX字」這類字數提示在實際輸出裡`;
+}
+
 async function callModuleAPI(moduleType){
   const card=document.getElementById('ai-rx-card');
   const loading=document.getElementById('ai-rx-loading');
@@ -2225,7 +2356,7 @@ async function callModuleAPI(moduleType){
   const soonBox=document.getElementById('ai-rx-module-soon');
   if(!card||!loading||!rxContent||!rxError) return;
 
-  if(moduleType!=='A'){
+  if(moduleType!=='A' && moduleType!=='B'){
     card.style.display='block'; loading.style.display='none'; rxContent.style.display='none'; rxError.style.display='none';
     if(soonBox) soonBox.style.display='block';
     return;
@@ -2235,7 +2366,8 @@ async function callModuleAPI(moduleType){
   card.style.display='block'; loading.style.display='block'; rxContent.style.display='none'; rxError.style.display='none';
   const loadTitle=document.getElementById('ai-rx-loading-title');
   const loadHint=document.getElementById('ai-rx-loading-hint');
-  if(loadTitle) loadTitle.textContent='正在為你產出完整職場突破報告';
+  const moduleLabel = moduleType==='A' ? '職場突破' : '財富增值';
+  if(loadTitle) loadTitle.textContent='正在為你產出完整'+moduleLabel+'報告';
   if(loadHint) loadHint.textContent='這份報告內容深度較高，通常需要約3～4分鐘才能完整產出，這是為了確保你拿到的是完整深度的報告——請耐心等候，不要重新整理或關閉頁面';
   const rebuttalBtn=document.getElementById('rebuttal-btn');
   if(rebuttalBtn) rebuttalBtn.style.display='none'; // 模組報告不提供二次校準
@@ -2245,7 +2377,7 @@ async function callModuleAPI(moduleType){
   const coord=ST.coord||{isDiag:false};
   const pathUnit = coord.isDiag ? soul : (path%10)||soul;
 
-  const systemPrompt = buildModuleASystemPrompt();
+  const systemPrompt = moduleType==='A' ? buildModuleASystemPrompt() : buildModuleBSystemPrompt();
   const userPrompt = `【這個人的完整資料】
 姓名：${name}
 靈魂號：${soul}｜路徑：${path}｜路徑個位：${pathUnit}
@@ -2263,7 +2395,7 @@ async function callModuleAPI(moduleType){
 【全年12個月流月數字與商業轉譯（供你撰寫「全年流月戰略地圖」使用，須改寫成外部環境呼應的描述，不能照抄）】
 ${buildModuleFlowMonthTable(year)}
 
-請依照system prompt的完整格式，輸出這個人的「A·職場突破360度全景報告」。`;
+請依照system prompt的完整格式，輸出這個人的「${moduleLabel}360度全景報告」。`;
 
   try{
     const res=await fetch('/api/claude',{
