@@ -239,7 +239,10 @@ svg#polar{width:100%;height:100%}
 .mod-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
 @media(max-width:440px){.mod-grid{grid-template-columns:1fr}}
 .mod-card{background:var(--lt3);border:1.5px solid var(--lt-b);border-radius:10px;padding:14px 16px;cursor:pointer;transition:all .2s}
-.mod-q{list-style:none;margin:8px 0 0;padding:0;border-top:1px dashed var(--lt-b2);padding-top:8px}
+.mod-q{list-style:none;margin:0;padding:0;max-height:0;opacity:0;overflow:hidden;transition:max-height .35s ease,opacity .35s ease,margin .35s ease}
+.mod-card:hover .mod-q,.mod-card.show-q .mod-q{max-height:220px;opacity:1;margin-top:8px;border-top:1px dashed var(--lt-b2);padding-top:8px}
+.mod-card{overflow:visible;position:relative}
+.mod-q-toggle{position:absolute;top:12px;right:12px;font-size:11px;color:var(--lt-t3);cursor:pointer;font-family:var(--mono)}
 .mod-q li{font-size:10.5px;color:var(--lt-t3);line-height:1.8;padding-left:12px;position:relative}
 .mod-q li::before{content:"·";position:absolute;left:0;color:var(--lt-gold)}
 .mod-card:hover,.mod-card.active{border-color:var(--lt-gold);background:#FEFBF4}
@@ -842,28 +845,37 @@ window.addEventListener('load', function(){
     <p style="font-family:var(--mono);font-size:10px;color:var(--lt-t3);letter-spacing:.1em;margin-bottom:10px">或者，選擇你最想深入的方向：</p>
     <div class="mod-grid">
       <div class="mod-card" onclick="selMod(this,'A')">
-        <div class="mod-name">A · 職場突破</div>
+        <div class="mod-name">A · 職場突破<span class="mod-q-toggle" onclick="event.stopPropagation();this.closest('.mod-card').classList.toggle('show-q')">問題▾</span></div>
         <div class="mod-d">位置、影響力、下一步</div>
         <ul class="mod-q">
           <li>該不該換工作/轉行？</li>
-          <li>升遷卡關怎麼辦？</li>
+          <li>為什麼努力主管看不到？</li>
           <li>業績停滯怎麼突破？</li>
+          <li>辦公室政治怎麼應對？</li>
+          <li>帶團隊很累怎麼辦？</li>
           <li>要不要自己出來創業？</li>
+          <li>我會不會被AI取代？</li>
+          <li>職場倦怠怎麼調整？</li>
         </ul>
       </div>
       <div class="mod-card" onclick="selMod(this,'B')">
-        <div class="mod-name">B · 財富增值</div>
+        <div class="mod-name">B · 財富增值<span class="mod-q-toggle" onclick="event.stopPropagation();this.closest('.mod-card').classList.toggle('show-q')">問題▾</span></div>
         <div class="mod-d">金錢頻率、財富引擎</div>
         <ul class="mod-q">
           <li>該不該開口要加薪？</li>
+          <li>我適合怎麼投資？</li>
           <li>錢都花去哪了、存不到錢？</li>
           <li>要不要買房、什麼時候買？</li>
+          <li>跟伴侶金錢觀不合怎麼辦？</li>
           <li>該不該接副業增加收入？</li>
+          <li>這樣賺錢會不會被淘汰？</li>
+          <li>賺錢賺到快崩潰值得嗎？</li>
         </ul>
       </div>
       <div class="mod-card" onclick="selMod(this,'C')"><div class="mod-name">C · 關係破局</div><div class="mod-d">人際卡點、互動模式</div></div>
       <div class="mod-card" onclick="selMod(this,'D')"><div class="mod-name">D · 健康調頻</div><div class="mod-d">身心信號、能量管理</div></div>
     </div>
+    <p style="font-size:10px;color:var(--lt-t3);text-align:center;margin-top:-6px;margin-bottom:4px">💡 滑鼠移到卡片上，可以看到這份報告會回答的完整問題</p>
     <button class="btn-lt" id="s2-mod-btn" onclick="goS3mod()" disabled style="margin-top:10px;width:100%">查看選定模組報告 →</button>
     <button class="btn-line" onclick="goLine()">💬 &nbsp;一對一深度陪跑（LINE）</button>
   </div>
@@ -965,23 +977,31 @@ window.addEventListener('load', function(){
     <p class="lt-feel" style="margin-bottom:14px">選擇你最想深入的方向：</p>
     <div class="mod-grid">
       <div class="mod-card" onclick="selModS4(this,'A')">
-        <div class="mod-name">A · 職場突破</div>
+        <div class="mod-name">A · 職場突破<span class="mod-q-toggle" onclick="event.stopPropagation();this.closest('.mod-card').classList.toggle('show-q')">問題▾</span></div>
         <div class="mod-d">位置、影響力、下一步</div>
         <ul class="mod-q">
           <li>該不該換工作/轉行？</li>
-          <li>升遷卡關怎麼辦？</li>
+          <li>為什麼努力主管看不到？</li>
           <li>業績停滯怎麼突破？</li>
+          <li>辦公室政治怎麼應對？</li>
+          <li>帶團隊很累怎麼辦？</li>
           <li>要不要自己出來創業？</li>
+          <li>我會不會被AI取代？</li>
+          <li>職場倦怠怎麼調整？</li>
         </ul>
       </div>
       <div class="mod-card" onclick="selModS4(this,'B')">
-        <div class="mod-name">B · 財富增值</div>
+        <div class="mod-name">B · 財富增值<span class="mod-q-toggle" onclick="event.stopPropagation();this.closest('.mod-card').classList.toggle('show-q')">問題▾</span></div>
         <div class="mod-d">金錢頻率、財富引擎</div>
         <ul class="mod-q">
           <li>該不該開口要加薪？</li>
+          <li>我適合怎麼投資？</li>
           <li>錢都花去哪了、存不到錢？</li>
           <li>要不要買房、什麼時候買？</li>
+          <li>跟伴侶金錢觀不合怎麼辦？</li>
           <li>該不該接副業增加收入？</li>
+          <li>這樣賺錢會不會被淘汰？</li>
+          <li>賺錢賺到快崩潰值得嗎？</li>
         </ul>
       </div>
       <div class="mod-card" onclick="selModS4(this,'C')"><div class="mod-name">C · 關係破局</div><div class="mod-d">人際卡點、互動模式</div></div>
@@ -2253,6 +2273,7 @@ function buildModuleASystemPrompt(){
 - 不使用「加起來100%」這類暗示互補的語氣描述任何百分比
 - 流月的「波浪相位」只是借用比喻，不能寫成任何形式的股市/金融市場預測
 - 每一句話都要具體連結到這個人的靈魂/天賦/流年資料，不能是可以套用在任何人身上的通用職場建議
+- 系統prompt裡出現的任何欄位代稱、程式變數名稱、方括號內的技術指示文字，全部只是寫給你自己參考用的內部說明，絕對不能原樣出現在實際輸出內容裡
 - 不能出現「約XX字」這類字數提示在實際輸出裡`;
 }
 
@@ -2285,8 +2306,9 @@ function buildModuleBSystemPrompt(){
 
 01・薪資與收入談判
 一句話破題
-診斷段落（例如「痛點X光」）：結合G欄摩擦特徵，推論這個人在「開口談錢」這個具體動作上，天生會卡在哪個心理環節。
-破局段落（例如「破局戰略」）：給出具體的談判時機與話術方向，結合今年流年判斷。
+【重要】不要預設使用者一定有「直接開口要加薪」的空間——很多人受限於公司薪酬架構，真正能施力的時機點是年度績效考核、轉職談offer、或爭取新職務/新職稱時的敘薪。破局段落必須涵蓋至少一種「不是直接開口，而是善用既有時機點」的具體做法，不能只給一種「找主管談」的單一情境。
+診斷段落（例如「痛點X光」）：結合G欄摩擦特徵，推論這個人在「爭取自己該有的報酬」這件事上，天生會卡在哪個心理環節。
+破局段落（例如「破局戰略」）：依這個人的處境給出至少兩種具體時機路徑的做法——（1）年度績效考核前，怎麼準備具體成果紀錄、在面談時主動陳述而不是被動等考核；（2）轉職或爭取新職務時，怎麼把過去的貢獻轉換成議價籌碼。結合今年流年判斷最適合啟動的時間點。
 
 02・投資決策傾向與風險耐受
 一句話破題
@@ -2303,8 +2325,9 @@ function buildModuleBSystemPrompt(){
 
 04・房產與重大資產決策
 一句話破題
-診斷段落（例如「決策盲點」）：結合這個人的天生盲區，推論面對「要不要買房」這類重大、不可逆的資產決策時，容易被什麼心理因素干擾判斷。
-破局段落（例如「決策校準」）：不評論該不該買房（這是使用者自己的判斷），但給出「這個人在做這類決策時該注意的執行盲點」，並可結合流月地圖判斷哪個月適合啟動看房/簽約流程。
+【重要】適用與02(投資決策)同一套界線：不能評論具體物件該不該買、市場現在貴不貴，但可以評論「這類重大且不可逆的決策」跟這個人天性合不合——例如這個人習慣快速拍板還是容易被親友意見動搖、簽約前的猶豫模式是什麼。
+診斷段落（例如「決策盲點」）：結合這個人的天生盲區，具體評論「房產這類需要長期扛住不確定性、一旦簽約很難反悔」的決策屬性，跟這個人天性適不適合，會在哪個環節容易被自己的慣性拖走（例如：容易在最後一刻因為想維持和諧而妥協、或容易因為想要掌控感而急著簽約）。
+破局段落（例如「決策校準」）：給出具體的「執行紀律」建議——例如簽約前一定要有的冷靜期天數、找誰當第三方意見來平衡自己的盲點、財務槓桿（貸款成數）的安全上限抓多少。可結合流月地圖判斷哪個月適合啟動看房/議價/簽約流程。
 
 05・財務界線與親密關係中的金錢議題
 一句話破題
@@ -2316,7 +2339,7 @@ function buildModuleBSystemPrompt(){
 
 06・副業與斜槓收入
 一句話破題
-診斷段落（例如「潛力診斷」）：【重要】根據sd.wealth與sd.talents，推導這個人適合的副業/斜槓收入型態本質，不能套用固定模板，必須是這個座標獨有的判斷。
+診斷段落（例如「潛力診斷」）：【重要】結合這個人的財富變現槓桿與三大天賦內容，推導這個人適合的副業/斜槓收入型態本質，不能套用固定模板，必須是這個座標獨有的判斷。
 破局段落（例如「落地路徑」）：給出具體的啟動方式與資源運用建議。
 
 07・財富核心信念與時代焦慮
@@ -2344,6 +2367,7 @@ function buildModuleBSystemPrompt(){
 - 不使用「加起來100%」這類暗示互補的語氣描述任何百分比
 - 流月的「波浪相位」只是借用比喻，不能寫成任何形式的股市/金融市場預測
 - 01、03、05、06四個子模組彼此不能收斂回同一句「你不敢要錢/你不敢花錢/你不敢投資」，必須各自聚焦在自己對應的具體生活情境（談判動作、消費行為、重大資產決策、副業啟動），這是本模組最容易犯的錯誤，撰寫時務必逐一檢查是否收斂重複
+- 系統prompt裡出現的任何欄位代稱、程式變數名稱、方括號內的技術指示文字，全部只是寫給你自己參考用的內部說明，絕對不能原樣出現在實際輸出內容裡
 - 每一句話都要具體連結到這個人的靈魂/天賦/流年資料，不能是可以套用在任何人身上的通用財務建議
 - 不能出現「約XX字」這類字數提示在實際輸出裡`;
 }
@@ -2401,7 +2425,7 @@ ${buildModuleFlowMonthTable(year)}
     const res=await fetch('/api/claude',{
       method:'POST', headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
-        system:systemPrompt, user:userPrompt, max_tokens:12000,
+        system:systemPrompt, user:userPrompt, max_tokens:16000,
         meta:{ name:name, soul:String(soul), year:String(year), coord:'('+soul+','+pathUnit+')', question:'A·職場突破模組報告', dataType:'B2C模組報告' }
       })
     });
@@ -2478,7 +2502,15 @@ async function callClaudeAPI(q) {
 
 你的任務是根據系統提供的用戶完整資料庫內容，針對他提出的具體問題，產出一份完整的「個人覺察處方箋」。這份處方箋是用戶付費購買的核心產品，深度與完整度必須達到專業諮詢等級。
 
-【輸出格式】嚴格按照以下結構輸出。【重要且必須遵守】整份報告全部加總（含開頭與識能所判斷）字數不可超過1400字，這是硬性上限，寧可每段寫得精簡扼要，也不能超過——超過會導致內容被系統截斷、無法顯示完整結尾，比精簡更嚴重。【極重要】下面每個段落說明裡出現的「約XX字」「XX-XX字」等字數提示，全部都只是寫給你自己掌握篇幅用的內部參考，絕對不能出現在你實際輸出的內容裡——你的輸出裡不應該有任何一句話提到字數、字數限制、或類似「(約XX字)」這種括號註記，只能有報告本身的文字內容。
+【輸出格式】嚴格按照以下結構輸出。【重要且必須遵守】整份報告全部加總（含開頭與識能所判斷）字數不可超過2400字，這是硬性上限，寧可每段寫得精簡扼要，也不能超過——超過會導致內容被系統截斷、無法顯示完整結尾，比精簡更嚴重。【極重要】下面每個段落說明裡出現的「約XX字」「XX-XX字」等字數提示，全部都只是寫給你自己掌握篇幅用的內部參考，絕對不能出現在你實際輸出的內容裡——你的輸出裡不應該有任何一句話提到字數、字數限制、或類似「(約XX字)」這種括號註記，只能有報告本身的文字內容。
+
+【極重要】情境類型判斷（先做這一步，才開始寫SECTION 1-4）
+在動筆之前，先判斷用戶這次的提問屬於「關係類」「職涯類」「決策類」「財富類」四種類型中的哪一種（可能同時偏向兩種，取最主要的一種）。這個判斷不會改變SECTION 1-4的資料來源（依然是SOUL_DB／SNR／ERROR_PATH／YEAR_DB這四組固定資料，架構完全不變），只會改變「同一層分析，要往哪個方向具體化」——地基不變，只是這次要在地基上，蓋一棟朝向這次提問類型的房子，不是每次都蓋同一種房子。
+- 關係類提問：SECTION 2的「行動層」著重在「這個人在人際互動當下的反應模式」，不是泛泛的職場行動力
+- 職涯類提問：SECTION 2的「決策層」著重在「這個人面對職涯選擇時的決策慣性」
+- 決策類提問（例如要不要做某件具體的事）：SECTION 2的「承載層」著重在「這個人面對這類不確定決定時的抗壓與猶豫模式」
+- 財富類提問：SECTION 2的「承載層」著重在「這個人面對財務風險時的抗壓力」，「靈魂層」著重在這個人對金錢的深層驅力
+此判斷同時影響SECTION 3、SECTION 4的舉例方向與用詞，讓整份報告的敘事重心自然貼合這次提問的類型，不是四種提問都用完全一樣的分析比重。
 
 （開頭，不要加標題）
 用一句話點破用戶真正在問的是什麼——不是他表面問的問題，而是藏在問題底下、他自己可能都還沒承認的那個核心焦慮或渴望。格式：「你問的是『XXX』，但從你的頻率來看，你真正在問的是：『XXX』」約30-40字。
@@ -2487,7 +2519,7 @@ async function callClaudeAPI(q) {
 這是這個人的底層設定，不管遇到什麼問題都在運作的東西。用SOUL_DB的靈魂稱號、天賦、職場/財富傾向、天生盲區，結合SNR的高壓反噬率，具體推論這個問題為什麼對他來說特別難。可以大膽推測他的具體處境（例如人際互動模式、慣性行為），不要只是覆述資料庫內容。約130-150字。
 
 ▍SECTION 2　決策神經解剖
-分四層分析這個人在「面對這個問題」時的內部運作方式，每一層都要包含一句「⚠ 留意：」的具體提醒，要真正貼合這次的具體問題，不要寫得像通用模板。【每一層分析+留意，合計55-65字，四層加總約220-260字】：
+分四層分析這個人在「面對這個問題」時的內部運作方式，每一層都要包含一句「⚠ 留意：」的具體提醒，要真正貼合這次的具體問題與上面判斷出的情境類型，不要寫得像通用模板。【每一層分析+留意，合計70-90字，四層加總約300-360字，這個空間比舊版寬鬆，用來讓每一層真正做到具體推演，不是條列式帶過】：
 
 行動層｜人格格　你的外部行動力與市場表現
 （分析+⚠留意）
@@ -2504,7 +2536,7 @@ async function callClaudeAPI(q) {
 最後一句總結：四層在這件事上如何互相影響、共同造成現在的卡點。約30-40字。
 
 ▍SECTION 3　你最容易走的錯誤路徑
-不要重複SECTION 2的內在需求分析。這一段回答的是「這樣下去，別人會怎麼看你、事情會怎麼演變」——外部代價視角，不是內在課題視角。用ERROR_PATH的邏輯，但必須明確連結到用戶這次提到的具體情境。格式：「這次的狀況，正是你這個模式的一次現形——[具體連結使用者的情境]。如果這個模式繼續下去，接下來最可能發生的是：[具體到別人的反應或事情的演變，不是內心感受]。」約100-120字。
+不要重複SECTION 2的內在需求分析。這一段回答的是「這樣下去，別人會怎麼看你、事情會怎麼演變」——外部代價視角，不是內在課題視角。用ERROR_PATH的邏輯，但必須明確連結到用戶這次提到的具體情境與情境類型。格式：「這次的狀況，正是你這個模式的一次現形——[具體連結使用者的情境]。如果這個模式繼續下去，接下來最可能發生的是：[具體到別人的反應或事情的演變，不是內心感受]。」約100-130字。
 
 ▍SECTION 4　今年破局行動指南
 先寫一句精煉的提醒句（呼應這個人的核心矛盾與最常見的錯誤路徑）。
@@ -2521,10 +2553,10 @@ async function callClaudeAPI(q) {
 5. 若用戶提到的對象握有結構性權力（主管、老闆），不能建議要求對方讓步或歸還已發生的損失，改為聚焦使用者自己可控的部分：下次的行為調整，或把紀錄留到未來結構性時機當長期籌碼。
 6. 給出行動後，接一句「這麼做是為了___」，說明目的，不能讓讀者猜「然後呢」。
 
-約140-170字。
+約220-280字，這個空間比舊版寬鬆許多，因為這是全篇唯一真正因提問而變的段落，值得花最多篇幅做真正的推演，不要因為篇幅變大就稀釋成廢話，每一句都要具體。
 
 ▍識能所判斷
-用裁決式的語氣，明確回答用戶提出的問題（適合/不適合、現在/不是現在），結合流年能量說明為什麼。最後一句話要給出明確的下一步信號，這句話也要滿足「行動+目的」的因果連結，不能是單純的反問句或留白。約80-100字。
+用裁決式的語氣，明確回答用戶提出的問題（適合/不適合、現在/不是現在），結合流年能量說明為什麼。最後一句話要給出明確的下一步信號，這句話也要滿足「行動+目的」的因果連結，不能是單純的反問句或留白。約100-130字。
 
 【語氣原則】
 - 用第二人稱「你」
