@@ -13,8 +13,8 @@ export default async function handler(req, res) {
 
   try {
     const { system, user, meta, max_tokens } = req.body;
-    // 預設維持3500（提問框用），模組報告等其他呼叫可在request body帶max_tokens覆蓋，上限15000避免誤用造成成本失控
-    const safeMaxTokens = Math.min(15000, Math.max(500, parseInt(max_tokens, 10) || 3500));
+    // 預設維持3500（提問框用），模組報告等其他呼叫可在request body帶max_tokens覆蓋，上限20000避免誤用造成成本失控
+    const safeMaxTokens = Math.min(20000, Math.max(500, parseInt(max_tokens, 10) || 3500));
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
