@@ -1078,9 +1078,10 @@ function calcFiveNum(name){
   let total=0;
   const chars=[...name];
   const strokes=chars.map(c=>KX[c]||0);
-  const P=r(strokes.reduce((a,b)=>a+b,0));
+  const totalSum=r(strokes.reduce((a,b)=>a+b,0));
+  const P=chars.length>=2?r(strokes[0]+strokes[1]):totalSum; // 人格＝姓氏最後一字＋名字第一字（姓名學正確定義）
   const L=chars.length>=2?r(strokes.slice(-2).reduce((a,b)=>a+b,0)):P;
-  const C=P;
+  const C=totalSum; // 總格＝全部姓名筆畫加總（獨立於人格，姓名學正確定義，2026/09/06修正）
   const E=r(strokes[0]||P);
   return{人格:P,地格:L,總格:C,外格:E,strokes};
 }
@@ -1147,14 +1148,33 @@ const FLOW_MONTH_DB={
 };
 
 function calcSNRIndex(P,L,C,soul){
+  // 2026/09/06重新設計：解決原公式五個弱項——
+  // (1)除法比例在分母趨近0時失控 (2)C型完全不參與計算，形同浪費
+  // (3)人格=總格造成雙倍權重（已從五格計算源頭修正，不需公式代償）
+  // (4)常數(25,20,13)缺乏理論依據 (5)兩數字用同一組ss/ns，容易同時卡在邊界、講不出連貫故事
+  // 新設計：改用「積分加總佔比」，C型同時貢獻穩定池與雜訊池（各60%/40%），避免分母趨近0；
+  // 常態防線用「n」欄位(平常屬性)，高壓失控率改用「s」欄位(高壓屬性，含「極端」標記)，兩者輸入來源不同，才是真正獨立的兩個情境判斷，不是同一組數字算兩次。
   const p=getSNR(P),l=getSNR(L),c=getSNR(C),s=getSNR(soul);
   const layers=[p,l,c,s];
-  const sn=layers.filter(d=>d.n.includes('S')).reduce((a,d)=>a+d.i,0);
-  const nn=layers.filter(d=>d.n.includes('N')).reduce((a,d)=>a+1,0);
-  const ns=layers.filter(d=>d.n.includes('N')).reduce((a,d)=>a+d.i,0);
-  const ss=layers.filter(d=>d.n.includes('S')).reduce((a,d)=>a+d.i,0);
-  const nPct=Math.min(97,Math.max(25,Math.round(25+(ss/(ns+0.5))*13)));
-  const sPct=Math.min(98,Math.max(15,Math.round(20+(ns/(ss+0.5))*13)));
+
+  function calcPct(field){
+    let stab=0, noise=0;
+    for(const d of layers){
+      const raw = d[field]||'';
+      const extreme = raw.includes('極端');
+      const intensity = d.i * (extreme?2:1); // 極端標記＝雙倍權重，取代原本憑感覺調出的×13
+      if(raw.includes('S')){ stab += intensity; noise += intensity*0.15; } // S型仍給雜訊池留基礎值，避免另一邊被歸零
+      else if(raw.includes('N')){ noise += intensity; stab += intensity*0.15; } // N型同理，留一點給穩定池
+      else { stab += intensity*0.6; noise += intensity*0.4; } // C型雙邊貢獻
+    }
+    const total = stab+noise;
+    return total>0 ? Math.round((noise/total)*100) : 50; // 理論上不會出現total=0（四層必有強度值），保留50%純防呆
+  }
+
+  const sPctRaw = calcPct('s');        // 高壓失控率：用「高壓屬性」欄位
+  const nPctRaw = 100 - calcPct('n');  // 常態防線：用「平常屬性」欄位，取穩定佔比
+  const nPct = Math.max(1, Math.min(99, nPctRaw));
+  const sPct = Math.max(1, Math.min(99, sPctRaw));
   const flip=Math.round(Math.abs(nPct-sPct)/10);
   return{nPct,sPct,flip};
 }
@@ -1428,7 +1448,7 @@ function runHook(){
     HK_UNIT[yi]||HK_UNIT[1],
     '事後連你自己都懊悔。',
     '',
-    `系統掃到你的高壓失控風險是 ${snr.sPct}%。`,
+    `系統掃到你決策特質裡，高壓失控成分佔了 ${snr.sPct}%。`,
     '這個數字背後，有一個你自己也感覺得到的時刻——',
     `「${blindShort}」`,
     '這往往是你困惑的根。',
@@ -1581,7 +1601,7 @@ function renderS1(){
   document.getElementById('s1-npct').textContent=snr.nPct+'%';
   document.getElementById('s1-spct').textContent=snr.sPct+'%';
   document.getElementById('s1-snr-explain').textContent=
-    `你有 ${snr.nPct}% 的時間，你是穩的——那個沉著、清醒、知道怎麼走的你。但一旦壓力超過某個點，有 ${snr.sPct}% 的機率，你會變成另一個版本的自己。（這兩個數字各自獨立計算，不是同一件事的正反面）`;
+    `你的決策特質組成裡，穩定成分佔${snr.nPct}%——這是你平常展現出來的沉著程度。另外，你的決策特質組成裡，有${snr.sPct}%的成分屬於「壓力大時容易被情緒或衝動主導」的類型——這代表你面對高壓情境時，系統性地比較難維持冷靜、穩定的判斷，不是意志力不夠，是天生的組成結構容易被這些成分主導。（這兩個數字分別衡量不同面向的組成佔比，不是同一件事的正反面，也不會、不需要加起來是100%）`;
 
   // DNA
   const si=((soul-1)%9)+1;
@@ -2503,7 +2523,7 @@ ${coord.isDiag ? '（對角線純粹頻率：本源直達靈魂，高度一致�
 地格 L=${nums.地格}｜特質：${lSNR.trait}｜高壓：${lSNR.desc}
 總格 C=${nums.總格}｜特質：${cSNR.trait}｜高壓：${cSNR.desc}
 靈魂 S=${soul}｜特質：${sSNR.trait}｜高壓：${sSNR.desc}
-穩定度指數：${snr.nPct}%　高壓脆弱度：${snr.sPct}%（這兩個數字各自獨立評估，不是互補關係，提到時不要說「加起來」或暗示兩者是同一件事的正反面）
+常態穩定佔比：${snr.nPct}%　高壓失控佔比：${snr.sPct}%【重要定義，務必遵守】這兩個數字指的是「這個人決策特質組成裡，穩定成分/不穩定成分各佔的比例」，是對組成結構的描述，不是機率（不代表「有幾%的機會發生」），也不是單一事件的強度（不代表「一旦發生會多嚴重」）。提到這兩個數字時，只能用「組成裡有百分之多少是＿＿類型」這種佔比講法，不能說「機率」「有幾%的可能性」，也不能說「強度」「嚴重程度」。這兩個數字各自獨立評估，不是互補關係，不會、也不需要加起來是100%。
 
 【ERROR_PATH 錯誤路徑】
 標題：${ep.title || '—'}
@@ -2607,7 +2627,7 @@ function generateRx(q){
   // SNR 內耗摩擦點
   setTxt('s3-p4-title','【SNR 降壓指標】常態 '+snr.nPct+'% ／ 高壓 '+snr.sPct+'%');
   setTxt('s3-p4-desc',
-    '你有'+snr.nPct+'%的時間是穩的，但高壓臨界一到，有'+snr.sPct+'%的機率啟動失控模式。（這兩個數字各自獨立計算，不是同一件事的正反面）'
+    '你的決策特質組成裡，穩定成分佔'+snr.nPct+'%；但有'+snr.sPct+'%的成分屬於高壓下容易被情緒或衝動主導的類型，代表面對壓力時系統性地比較難維持冷靜判斷。（這兩個數字分別衡量不同面向的組成佔比，不是同一件事的正反面）'
     +'你的靈魂底層（'+sSNR.trait+'）和行動路徑之間的張力，正是這個內耗的來源。');
 
   // ── SECTION 2：決策神經解剖 ──
@@ -2712,7 +2732,7 @@ async function submitRebuttalA(){
   elB.innerHTML='<div style="display:flex;align-items:center;gap:10px;color:var(--lt-t2);font-size:13px"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span>系統正在進行二次頻率校準…</span></div>';
   cardB.scrollIntoView({behavior:'smooth',block:'start'});
   const originalReport=document.getElementById('ai-rx-text')&&document.getElementById('ai-rx-text').textContent||'';
-  const systemPrompt2=`你是識能所的覺察處方師。用戶剛收到一份根據他的頻率座標生成的「破局處方箋」，但他認為某些分析不準確，提出了抗辯。你的任務：1. 認真對待用戶的抗辯，不否定他的感受。2. 用更深層的角度解釋為什麼系統的分析可能比他的表面直覺更接近真相——尤其是「看似不準的地方往往是最核心的盲區」這個邏輯。3. 如果用戶的抗辯指出了一個確實值得重新考量的點，誠實承認，但仍要給出更深的洞察。4.【一般情況】結尾不要叫用戶去找顧問，必須包含至少一項具體、可執行的小行動方向，不能只用反問句或開放式留白收尾。5.【例外情況，務必遵守】如果用戶的抗辯，是在要求識能所評論指名道姓的具體投資標的（某支股票、某支基金、某個建案）好不好、該不該買——這是識能所命理系統本來就不做判斷的範圍（見主報告的投資與房產類提問界線），不能為了滿足抗辯而破例給出具體標的建議。但如果用戶問的是市場/房市整體氛圍的一般看法，這不在限制範圍內，可以正常回應。若真的遇到指名道姓的標的請求，誠實說明「這已經超出識能所命理系統能判斷的範圍，不是敷衍你」，並且此時可以、也應該引導用戶尋求識能所一對一深度諮詢或專業理財顧問——這不是逃避問題，是誠實承認範圍限制。語氣：直接、有溫度、敢於維持立場但不強硬、不說教。約200-300字。【極重要：這個字數提示只給你自己參考用，絕對不能出現在實際輸出內容裡】`;
+  const systemPrompt2=`你是識能所的覺察處方師。用戶剛收到一份根據他的頻率座標生成的「破局處方箋」，但他認為某些分析不準確，提出了抗辯。你的任務：1. 認真對待用戶的抗辯，不否定他的感受。2. 用更深層的角度解釋為什麼系統的分析可能比他的表面直覺更接近真相——尤其是「看似不準的地方往往是最核心的盲區」這個邏輯。3. 如果用戶的抗辯指出了一個確實值得重新考量的點，誠實承認，但仍要給出更深的洞察。4.【一般情況】結尾不要叫用戶去找顧問，必須包含至少一項具體、可執行的小行動方向，不能只用反問句或開放式留白收尾。5.【例外情況，務必遵守】如果用戶的抗辯，是在要求識能所評論指名道姓的具體投資標的（某支股票、某支基金、某個建案）好不好、該不該買——這是識能所命理系統本來就不做判斷的範圍（見主報告的投資與房產類提問界線），不能為了滿足抗辯而破例給出具體標的建議。但如果用戶問的是市場/房市整體氛圍的一般看法，這不在限制範圍內，可以正常回應。若真的遇到指名道姓的標的請求，誠實說明「這已經超出識能所命理系統能判斷的範圍，不是敷衍你」，並且此時可以、也應該引導用戶尋求識能所一對一深度諮詢或專業理財顧問——這不是逃避問題，是誠實承認範圍限制。6.【常態穩定佔比／高壓失控佔比的定義，務必遵守，不能自己臨場發明別的解釋】如果用戶針對這兩個數字抗辯，只能用「這是決策特質組成裡，各類型成分所佔的比例」這個定義去回應——不是機率（不是「有幾%的機會發生」），也不是單一事件的強度（不是「一旦發生會多嚴重」）。過去曾發生過在抗辯時把這兩個數字解釋成「強度」，這是錯誤示範，不能重複，務必維持「組成佔比」這個唯一定義，跟正式報告裡的說法保持一致。語氣：直接、有溫度、敢於維持立場但不強硬、不說教。約200-300字。【極重要：這個字數提示只給你自己參考用，絕對不能出現在實際輸出內容裡】`;
   const userPrompt2=`【原始破局處方箋內容】\n${originalReport}\n\n【用戶的抗辯內容】\n「${rb}」\n\n請針對用戶的抗辯進行二次頻率校準回應。`;
   try{
     const res=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({system:systemPrompt2,user:userPrompt2,meta:{name:(ST.name||''),soul:String(ST.soul||''),year:String(ST.year||''),coord:'('+(ST.soul||'')+','+(ST.path?((ST.path%10)||ST.soul):(ST.soul||''))+')',question:'【二次校準抗辯】'+rb,dataType:(window._isOtherMode?'B2B對象分析':'B2C自測')}})});
