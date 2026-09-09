@@ -2159,11 +2159,11 @@ function buildModuleASystemPromptPart1(){
 }
 
 function buildModuleASystemPromptPart2(){
-  return `你是識能所的高階商戰顧問，正在為用戶產出一份「職場突破360度全景報告」的後半段——這是用戶付費解鎖的核心產品，深度必須達到專業顧問等級，內容價值與完整度優先於精簡。【重要】這是報告的後半段，讀者已經看過頁首、前言、第一層，直接從第二層開始寫，不要重複頁首、前言或任何開場白，也不要在最後加總結句或提及「流月」——流月地圖跟結尾總結是另一個獨立環節，這裡只要在08的破局段落結束就停止。
+  return `你是識能所的高階商戰顧問，正在為用戶產出一份「職場突破360度全景報告」的中段——這是用戶付費解鎖的核心產品，深度必須達到專業顧問等級，內容價值與完整度優先於精簡。【重要】這是報告的中段，讀者已經看過頁首、前言、第一層，直接從第二層開始寫，不要重複頁首、前言或任何開場白，也不要加總結句——這裡只要在05的破局段落結束就停止，後面還有第三層跟結尾，是另外獨立的環節。
 
 【格式：粗體重點標示】粗體只保留給以下三類句子，不是隨意挑1-2句：(1)每條具體戰術/行動的開場動作句；(2)段落中的心法轉折句，通常是「你最大的___，不是___，而是___」這種句型；(3)收尾的差異化/護城河總結句。說明性、鋪陳性的句子一律不加粗體，避免整段花花的、失去強調效果。
 
-【輸出格式，嚴格依序，缺一不可，直接從第二層開始】
+【輸出格式，嚴格依序，缺一不可，只到本部分結束】
 
 ▍第二層：【戰術與謀略層】—— 人際、政治與團隊的控局藝術
 層級引言（固定）：「當世俗數字穩固後，您需要掌握在組織內借力使力、操控全局的政治工具。」
@@ -2177,6 +2177,20 @@ function buildModuleASystemPromptPart2(){
 一句話破題
 診斷段落（例如「管理盲點」）：結合天生盲區，推論這個人帶團隊時最容易累死自己或卡住的模式。
 破局段落（例如「破局戰術」）：給出具體的領導風格調整方向。
+
+【嚴格禁止】
+- 每一句話都要具體連結到這個人的靈魂/天賦/流年資料，不能是可以套用在任何人身上的通用職場建議
+- 系統prompt裡出現的任何欄位代稱、程式變數名稱、方括號內的技術指示文字，全部只是寫給你自己參考用的內部說明，絕對不能原樣出現在實際輸出內容裡
+- 不能出現「約XX字」這類字數提示在實際輸出裡
+- 本部分寫到05的破局段落就結束，不要加總結句、不要提及任何分段機制`;
+}
+
+function buildModuleASystemPromptPart3(){
+  return `你是識能所的高階商戰顧問，正在為用戶產出一份「職場突破360度全景報告」的最後段落——這是用戶付費解鎖的核心產品，深度必須達到專業顧問等級，內容價值與完整度優先於精簡。【重要】讀者已經看過頁首、前言、第一層、第二層，直接從第三層開始寫，不要重複前面任何內容或開場白，也不要提及「流月」——流月地圖跟結尾總結是另一個獨立環節，這裡只要在08的破局段落結束就停止。
+
+【格式：粗體重點標示】粗體只保留給以下三類句子，不是隨意挑1-2句：(1)每條具體戰術/行動的開場動作句；(2)段落中的心法轉折句，通常是「你最大的___，不是___，而是___」這種句型；(3)收尾的差異化/護城河總結句。說明性、鋪陳性的句子一律不加粗體，避免整段花花的、失去強調效果。
+
+【輸出格式，嚴格依序，缺一不可，直接從第三層開始】
 
 ▍第三層：【高維與靈魂層】—— 創業、內耗與終極價值的校準
 層級引言（固定）：「這是識能所系統的深水區。解決您靈魂深處的時代焦慮，確保您在世俗奪取物質時，內在系統依然滿血穩定。」
@@ -2202,7 +2216,7 @@ function buildModuleASystemPromptPart2(){
 - 每一句話都要具體連結到這個人的靈魂/天賦/流年資料，不能是可以套用在任何人身上的通用職場建議
 - 系統prompt裡出現的任何欄位代稱、程式變數名稱、方括號內的技術指示文字，全部只是寫給你自己參考用的內部說明，絕對不能原樣出現在實際輸出內容裡
 - 不能出現「約XX字」這類字數提示在實際輸出裡
-- 本部分不要輸出頁首、前言、流月地圖或結尾總結，直接從第二層開始、08結束就停止，不要提及任何分段機制`;
+- 本部分不要輸出流月地圖或結尾總結，直接從第三層開始、08結束就停止，不要提及任何分段機制`;
 }
 
 // ══ B・財富增值 system prompt ══
@@ -2259,7 +2273,7 @@ function buildModuleBSystemPromptPart1(){
 }
 
 function buildModuleBSystemPromptPart2(){
-  return `你是識能所的高階財富顧問，正在為用戶產出一份「財富增值360度全景報告」的後半段——這是用戶付費解鎖的核心產品，深度必須達到專業顧問等級，內容價值與完整度優先於精簡。【重要】這是報告的後半段，讀者已經看過頁首、前言、第一層，直接從第二層開始寫，不要重複頁首、前言或任何開場白，也不要在最後加總結句或提及「流月」——流月地圖跟結尾總結是另一個獨立環節，這裡只要在08的破局段落結束就停止。
+  return `你是識能所的高階財富顧問，正在為用戶產出一份「財富增值360度全景報告」的中段——這是用戶付費解鎖的核心產品，深度必須達到專業顧問等級，內容價值與完整度優先於精簡。【重要】這是報告的中段，讀者已經看過頁首、前言、第一層，直接從第二層開始寫，不要重複頁首、前言或任何開場白，也不要加總結句——這裡只要在05的破局段落結束就停止，後面還有第三層跟結尾，是另外獨立的環節。
 
 【格式：粗體重點標示】粗體只保留給以下三類句子：(1)每條具體戰術/行動的開場動作句；(2)段落中的心法轉折句；(3)收尾的差異化/護城河總結句。說明性、鋪陳性的句子一律不加粗體。
 
@@ -2267,7 +2281,7 @@ function buildModuleBSystemPromptPart2(){
 1.【可以講，而且要具體】資產類型的特性與這個人天性的適配度，可以評論「這類決策屬性適不適合這個人」，但不能評論「這個決定本身該不該做」。
 2.【絕對不能講】指名道姓的公司、股票代號、基金名稱、不動產具體物件，以及「現在該不該進場某個標的」這種精確判斷。市場或房市整體氛圍的質性看法可以自由回應。
 
-【輸出格式，嚴格依序，缺一不可，直接從第二層開始】
+【輸出格式，嚴格依序，缺一不可，只到本部分結束】
 
 ▍第二層：【戰術與謀略層】—— 資產、關係與界線的控局藝術
 層級引言（固定）：「當基本收支穩固後，您需要掌握在重大資產決策與親密關係裡，讓財務真正為自己所用的技巧。」
@@ -2282,6 +2296,25 @@ function buildModuleBSystemPromptPart2(){
 一句話破題
 診斷段落（例如「互動能量解讀」）：推論這個人在親密關係/家人金錢往來裡最容易卡住的模式。
 破局段落（例如「關係防護策略」）：禁止使用「貴人/小人」類詞彙，給出可自行觀察驗證的具體判斷方式或協議機制。
+
+【嚴格禁止】
+- 絕對不能出現指名道姓的公司、股票代號、基金名稱、不動產具體物件
+- 每一句話都要具體連結到這個人的靈魂/天賦/流年資料，不能是可以套用在任何人身上的通用財務建議
+- 系統prompt裡出現的任何欄位代稱、程式變數名稱、方括號內的技術指示文字，全部只是寫給你自己參考用的內部說明，絕對不能原樣出現在實際輸出內容裡
+- 不能出現「約XX字」這類字數提示在實際輸出裡
+- 本部分寫到05的破局段落就結束，不要加總結句、不要提及任何分段機制`;
+}
+
+function buildModuleBSystemPromptPart3(){
+  return `你是識能所的高階財富顧問，正在為用戶產出一份「財富增值360度全景報告」的最後段落——這是用戶付費解鎖的核心產品，深度必須達到專業顧問等級，內容價值與完整度優先於精簡。【重要】讀者已經看過頁首、前言、第一層、第二層，直接從第三層開始寫，不要重複前面任何內容或開場白，也不要提及「流月」——流月地圖跟結尾總結是另一個獨立環節，這裡只要在08的破局段落結束就停止。
+
+【格式：粗體重點標示】粗體只保留給以下三類句子：(1)每條具體戰術/行動的開場動作句；(2)段落中的心法轉折句；(3)收尾的差異化/護城河總結句。說明性、鋪陳性的句子一律不加粗體。
+
+【投資建議界線，務必嚴格遵守】
+1.【可以講，而且要具體】資產類型的特性與這個人天性的適配度，可以評論「這類決策屬性適不適合這個人」，但不能評論「這個決定本身該不該做」。
+2.【絕對不能講】指名道姓的公司、股票代號、基金名稱、不動產具體物件，以及「現在該不該進場某個標的」這種精確判斷。市場或房市整體氛圍的質性看法可以自由回應。
+
+【輸出格式，嚴格依序，缺一不可，直接從第三層開始】
 
 ▍第三層：【高維與靈魂層】—— 信念、自我價值與內耗的終極校準
 層級引言（固定）：「這是識能所系統的深水區。解決您對金錢最深層的信念與焦慮，確保您在追求財富時，內在系統依然滿血穩定。」
@@ -2305,11 +2338,11 @@ function buildModuleBSystemPromptPart2(){
 
 【嚴格禁止】
 - 絕對不能出現指名道姓的公司、股票代號、基金名稱、不動產具體物件
-- 01、03、05、06四個子模組彼此不能收斂回同一句「你不敢要錢/你不敢花錢/你不敢投資」，必須各自聚焦在自己對應的具體生活情境（談判動作、消費行為、重大資產決策、副業啟動），這是本模組最容易犯的錯誤，撰寫時務必逐一檢查是否收斂重複
+- 06四個子模組彼此不能收斂回同一句「你不敢要錢/你不敢花錢/你不敢投資」，必須聚焦在自己對應的具體生活情境（副業啟動），這是本模組最容易犯的錯誤
 - 系統prompt裡出現的任何欄位代稱、程式變數名稱、方括號內的技術指示文字，全部只是寫給你自己參考用的內部說明，絕對不能原樣出現在實際輸出內容裡
 - 每一句話都要具體連結到這個人的靈魂/天賦/流年資料，不能是可以套用在任何人身上的通用財務建議
 - 不能出現「約XX字」這類字數提示在實際輸出裡
-- 本部分不要輸出頁首、前言、流月地圖或結尾總結，直接從第二層開始、08結束就停止，不要提及任何分段機制`;
+- 本部分不要輸出流月地圖或結尾總結，直接從第三層開始、08結束就停止，不要提及任何分段機制`;
 }
 
 // ══ 全年流月預報年曆（加贈內容，獨立於主報告，讀完主報告後另外觸發生成）══
@@ -2421,42 +2454,35 @@ async function callModuleAPI(moduleType){
   const persona = buildModulePersonaBlock();
   const promptPart1 = moduleType==='A' ? buildModuleASystemPromptPart1() : buildModuleBSystemPromptPart1();
   const promptPart2 = moduleType==='A' ? buildModuleASystemPromptPart2() : buildModuleBSystemPromptPart2();
+  const promptPart3 = moduleType==='A' ? buildModuleASystemPromptPart3() : buildModuleBSystemPromptPart3();
   const userPromptCommon = `${persona}\n\n請依照system prompt的完整格式，輸出這個人的「${moduleLabel}360度全景報告」對應的段落。`;
 
-  try{
-    // 第1段：頁首+前言+第一層。拆成兩次呼叫，每次輸出量變小，
-    // 是為了讓每一次API呼叫都能在免費方案的執行時間限制內完成，
-    // 不要合併回一次呼叫。
-    if(loadTitle) loadTitle.textContent='正在為你產出'+moduleLabel+'報告（1/2）';
-    if(loadHint) loadHint.textContent='正在生成核心診斷部分，通常需要約1分鐘，請耐心等候，不要重新整理或關閉頁面';
-    const res1=await fetch('/api/claude',{
+  async function callOnePart(systemPrompt, partLabel, partNum){
+    if(loadTitle) loadTitle.textContent='正在為你產出'+moduleLabel+'報告（'+partNum+'/3）';
+    if(loadHint) loadHint.textContent='正在生成'+partLabel+'，通常需要約40秒，請耐心等候，不要重新整理或關閉頁面';
+    const res=await fetch('/api/claude',{
       method:'POST', headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
-        system:promptPart1, user:userPromptCommon, max_tokens:7000,
-        meta:{ name:ST.name||'', soul:String(ST.soul||''), year:String(ST.year||''), coord:'', question:moduleLabelFull+'（第1段）', dataType:'B2C模組報告' }
+        system:systemPrompt, user:userPromptCommon, max_tokens:4500,
+        meta:{ name:ST.name||'', soul:String(ST.soul||''), year:String(ST.year||''), coord:'', question:moduleLabelFull+'（第'+partNum+'段）', dataType:'B2C模組報告' }
       })
     });
-    if(!res1.ok) throw new Error('API error '+res1.status);
-    const data1=await res1.json();
-    const text1=data1.text||'';
+    if(!res.ok) throw new Error('API error '+res.status);
+    const data=await res.json();
+    return data.text||'';
+  }
 
-    // 第2段：第二層+第三層
-    if(loadTitle) loadTitle.textContent='正在為你產出'+moduleLabel+'報告（2/2）';
-    if(loadHint) loadHint.textContent='正在生成戰術與心法部分，通常需要約1分鐘，請耐心等候，不要重新整理或關閉頁面';
-    const res2=await fetch('/api/claude',{
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        system:promptPart2, user:userPromptCommon, max_tokens:7000,
-        meta:{ name:ST.name||'', soul:String(ST.soul||''), year:String(ST.year||''), coord:'', question:moduleLabelFull+'（第2段）', dataType:'B2C模組報告' }
-      })
-    });
-    if(!res2.ok) throw new Error('API error '+res2.status);
-    const data2=await res2.json();
-    const text2=data2.text||'';
+  try{
+    // 拆成三段各自獨立呼叫，每段輸出量更小（max_tokens:4500），
+    // 是為了讓每一次API呼叫都能在免費方案的執行時間限制內完成，
+    // 不要合併回更少次呼叫。
+    const text1 = await callOnePart(promptPart1, '核心診斷部分', 1);
+    const text2 = await callOnePart(promptPart2, '人際與團隊戰術部分', 2);
+    const text3 = await callOnePart(promptPart3, '創業與心法部分', 3);
 
     loading.style.display='none';
     const rxText=document.getElementById('ai-rx-text');
-    const formatted = formatModuleText(text1 + '\n\n' + text2);
+    const formatted = formatModuleText(text1 + '\n\n' + text2 + '\n\n' + text3);
     if(rxText) rxText.innerHTML=formatted;
     rxContent.style.display='block';
     const flowBtn=document.getElementById('flowmonth-btn');
