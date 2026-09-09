@@ -73,4 +73,14 @@ export default async function handler(req, res) {
           console.log('Sheets logging: response status =', sheetRes.status, ', body =', sheetResText);
         }))
         .catch(logErr => {
-          console.erro
+          console.error('Sheets log setup error:', logErr);
+        });
+    }
+
+    return res.status(200).json({ text });
+
+  } catch (err) {
+    console.error('API error:', err);
+    return res.status(500).json({ error: err.message });
+  }
+}
