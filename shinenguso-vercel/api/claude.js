@@ -39,34 +39,38 @@ export default async function handler(req, res) {
     const data = await response.json();
     const text = data.content?.map(c => c.text || '').join('') || '';
 
+    // ── Google Sheet 記錄：fire-and-forget（方案A）──
+    // 不 await，讓寫入在背景進行，不拖慢回傳給使用者的時間。
+    // 取捨：Vercel 有機率在回應送出後就凍結這個執行環境，
+    // 導致這個背景請求偶爾來不及送達、漏記一兩筆 log，
+    // 但這只影響後台數據追蹤，不影響使用者拿到的報告內容。
     if (process.env.GOOGLE_SHEET_URL && meta) {
-      try {
-        const sheetData = {
-          timestamp: new Date().toISOString(),
-          name: meta.name || '',
-          soul: meta.soul || '',
-          year: meta.year || '',
-          coord: meta.coord || '',
-          question: meta.question || '',
-          report: text,
-          dataType: meta.dataType || 'B2C自測',
-          client: meta.client || '',
-          useCase: meta.useCase || '',
-          targetRole: meta.targetRole || '',
-          feedback: meta.feedback || '',
-          status: meta.status || '',
-        };
-        console.log('Sheets logging: attempting to POST to', process.env.GOOGLE_SHEET_URL);
-        const sheetRes = await fetch(process.env.GOOGLE_SHEET_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(sheetData),
+      const sheetData = {
+        timestamp: new Date().toISOString(),
+        name: meta.name || '',
+        soul: meta.soul || '',
+        year: meta.year || '',
+        coord: meta.coord || '',
+        question: meta.question || '',
+        report: text,
+        dataType: meta.dataType || 'B2C自測',
+        client: meta.client || '',
+        useCase: meta.useCase || '',
+        targetRole: meta.targetRole || '',
+        feedback: meta.feedback || '',
+        status: meta.status || '',
+      };
+      fetch(process.env.GOOGLE_SHEET_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(sheetData),
+      })
+        .then(sheetRes => sheetRes.text().then(sheetResText => {
+          console.log('Sheets logging: response status =', sheetRes.status, ', body =', sheetResText);
+        }))
+        .catch(logErr => {
+          console.error('Sheets log setup error:', logErr);
         });
-        const sheetResText = await sheetRes.text();
-        console.log('Sheets logging: response status =', sheetRes.status, ', body =', sheetResText);
-      } catch (logErr) {
-        console.error('Sheets log setup error:', logErr);
-      }
     }
 
     return res.status(200).json({ text });
