@@ -28,6 +28,10 @@ export default async function handler(req, res) {
         max_tokens: safeMaxTokens,
         system: system,
         messages: [{ role: 'user', content: user }],
+        // claude-sonnet-5 預設會自動開啟「adaptive thinking」，思考過程會佔用max_tokens額度，
+        // 導致回應變慢、甚至可能把整個max_tokens額度耗在思考上而沒有真正的輸出文字。
+        // 這裡的產品場景是直接生成結構化報告文字，不需要模型內部推理過程，所以明確關閉。
+        thinking: { type: 'disabled' },
       }),
     });
 
@@ -69,14 +73,4 @@ export default async function handler(req, res) {
           console.log('Sheets logging: response status =', sheetRes.status, ', body =', sheetResText);
         }))
         .catch(logErr => {
-          console.error('Sheets log setup error:', logErr);
-        });
-    }
-
-    return res.status(200).json({ text });
-
-  } catch (err) {
-    console.error('API error:', err);
-    return res.status(500).json({ error: err.message });
-  }
-}
+          console.erro
