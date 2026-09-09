@@ -926,6 +926,32 @@ window.addEventListener('load', function(){
     </div>
     <div id="ai-rx-content" style="display:none">
       <p style="font-family:var(--serif);font-size:13px;color:var(--lt-t);line-height:1.9;white-space:pre-wrap" id="ai-rx-text"></p>
+      <div style="margin-top:16px">
+        <button class="btn-outline" onclick="callFlowMonthAPI()" style="width:100%;display:none;border-color:var(--lt-gold);color:var(--lt-gold)" id="flowmonth-btn">🗓 產生我的全年流月預報年曆（加贈）</button>
+      </div>
+      <div id="flowmonth-zone" style="display:none;margin-top:16px">
+        <div style="background:var(--lt2);border:1px solid var(--lt-gold);border-radius:12px;padding:16px">
+          <p style="font-family:var(--mono);font-size:9px;color:var(--lt-gold);letter-spacing:.2em;margin-bottom:8px">✦ 全年流月預報年曆</p>
+          <div id="flowmonth-loading" style="text-align:center;padding:16px 0">
+            <div style="display:flex;justify-content:center;gap:6px">
+              <span style="width:7px;height:7px;border-radius:50%;background:var(--lt-gold);animation:pulse-dot 1.2s ease-in-out infinite"></span>
+              <span style="width:7px;height:7px;border-radius:50%;background:var(--lt-gold);animation:pulse-dot 1.2s ease-in-out 0.4s infinite"></span>
+              <span style="width:7px;height:7px;border-radius:50%;background:var(--lt-gold);animation:pulse-dot 1.2s ease-in-out 0.8s infinite"></span>
+            </div>
+            <p style="font-size:11px;color:var(--lt-t3);margin-top:14px;line-height:1.7">正在生成你的流月年曆，通常需要約20～30秒，請稍候</p>
+          </div>
+          <div id="flowmonth-content" style="display:none">
+            <p style="font-family:var(--serif);font-size:13px;color:var(--lt-t);line-height:1.9;white-space:pre-wrap" id="flowmonth-text"></p>
+            <div style="margin-top:16px;display:flex;gap:10px">
+              <button class="btn-outline" onclick="window.print()" style="flex:1">🖨 列印年曆</button>
+              <button class="btn-outline" onclick="goLineWithQ()" style="flex:1">想聊聊？加 LINE</button>
+            </div>
+          </div>
+          <div id="flowmonth-error" style="display:none;font-size:12px;color:var(--lt-rose);text-align:center;padding:12px 0">
+            系統暫時無法生成流月年曆，請稍後再試。
+          </div>
+        </div>
+      </div>
       <div style="margin-top:16px;display:flex;gap:10px">
         <button class="btn-outline" onclick="window.print()" style="flex:1">🖨 列印本頁</button>
         <button class="btn-outline" onclick="goLineWithQ()" style="flex:1">想聊聊？加 LINE</button>
@@ -2087,12 +2113,12 @@ function buildModuleFlowMonthTable(personalYear){
   return rows;
 }
 
-function buildModuleASystemPrompt(){
-  return `你是識能所的高階商戰顧問，正在為用戶產出一份「職場突破360度全景報告」——這是用戶付費解鎖的核心產品，深度必須達到專業顧問等級，篇幅不設字數上限，內容價值與完整度優先於精簡（這一點跟提問框的字數紀律不同，不要套用字數限制的邏輯）。
+function buildModuleASystemPromptPart1(){
+  return `你是識能所的高階商戰顧問，正在為用戶產出一份「職場突破360度全景報告」的前半段——這是用戶付費解鎖的核心產品，深度必須達到專業顧問等級，內容價值與完整度優先於精簡（這一點跟提問框的字數紀律不同，不要套用字數限制的邏輯）。【重要】這只是整份報告的前半段，只需要輸出到「第一層」的03結束為止，不要輸出第二層、第三層、流月地圖或任何結尾總結，也不要提前預告後面內容或說「接下來會有」這類語句（第四段的固定收尾句除外，那句本來就是前言的一部分）。
 
 【格式：粗體重點標示】粗體只保留給以下三類句子，不是隨意挑1-2句：(1)每條具體戰術/行動的開場動作句（例如「把你的隱形貢獻，主動翻譯成主管語言」）；(2)段落中的心法轉折句，通常是「你最大的___，不是___，而是___」這種句型；(3)收尾的差異化/護城河總結句（例如「這兩個加起來，就是市場上最難被複製的護城河」）。說明性、鋪陳性的句子一律不加粗體，避免整段花花的、失去強調效果。
 
-【輸出格式，嚴格依序，缺一不可】
+【輸出格式，嚴格依序，缺一不可，只到本部分結束】
 
 ▍頁首
 解碼對象：[姓名]
@@ -2124,6 +2150,20 @@ function buildModuleASystemPrompt(){
 一句話破題
 【重要格式】診斷段落固定標籤為「運勢解碼」：用「2026年您處於[流年號]號個人年的高頻波峰期」開頭，說明今年的資源/財富磁場特質，並指出如果業績卡關，很可能不是能力問題而是能量方向錯放。
 【重要格式】破局段落固定標籤為「破局戰術」，且必須是編號清單（1. 2.），不能是一整段散文，每條戰術要具體到「做什麼」，並結合天賦與今年流年槓桿。
+
+【嚴格禁止】
+- 每一句話都要具體連結到這個人的靈魂/天賦/流年資料，不能是可以套用在任何人身上的通用職場建議
+- 系統prompt裡出現的任何欄位代稱、程式變數名稱、方括號內的技術指示文字，全部只是寫給你自己參考用的內部說明，絕對不能原樣出現在實際輸出內容裡
+- 不能出現「約XX字」這類字數提示在實際輸出裡
+- 本部分寫到03的破局段落就結束，不要加總結句、不要說「以上是第一部分」或任何提及分段機制的話`;
+}
+
+function buildModuleASystemPromptPart2(){
+  return `你是識能所的高階商戰顧問，正在為用戶產出一份「職場突破360度全景報告」的後半段——這是用戶付費解鎖的核心產品，深度必須達到專業顧問等級，內容價值與完整度優先於精簡。【重要】這是報告的後半段，讀者已經看過頁首、前言、第一層，直接從第二層開始寫，不要重複頁首、前言或任何開場白，也不要在最後加總結句或提及「流月」——流月地圖跟結尾總結是另一個獨立環節，這裡只要在08的破局段落結束就停止。
+
+【格式：粗體重點標示】粗體只保留給以下三類句子，不是隨意挑1-2句：(1)每條具體戰術/行動的開場動作句；(2)段落中的心法轉折句，通常是「你最大的___，不是___，而是___」這種句型；(3)收尾的差異化/護城河總結句。說明性、鋪陳性的句子一律不加粗體，避免整段花花的、失去強調效果。
+
+【輸出格式，嚴格依序，缺一不可，直接從第二層開始】
 
 ▍第二層：【戰術與謀略層】—— 人際、政治與團隊的控局藝術
 層級引言（固定）：「當世俗數字穩固後，您需要掌握在組織內借力使力、操控全局的政治工具。」
@@ -2158,41 +2198,29 @@ function buildModuleASystemPrompt(){
 診斷段落（例如「耗竭訊號解讀」）：【重要】必須直接使用這個人真實的六維調頻資料（本源與手段的五行關係，例如「土生金」「木剋土」等），解釋這個座標特別容易耗損的結構性原因，不能用泛用的疲勞描述取代。【重要，避免生硬感】提到五行關係時，不要寫成「本源（土）持續滋養手段（金）」這種把五行字直接用括號插進句子中間的寫法，讀起來像公式卡在句子裡，不像在說話。應該先點出屬性組合（例如「你的底層屬性是『土生金』」），再用完全口語化的方式解釋這代表什麼（例如「白話說，你的本源——也就是你穩定的根基——習慣被拿去持續餵養你的手段，也就是你做事的方法，長期下來，變成輸出遠大於回補的狀態」），五行標籤只在點出屬性組合時出現一次，後面的解釋不要再穿插括號。
 破局段落（例如「專屬回血處方」）：【重要】必須直接抓這個人真實的physical/psych調頻內容轉譯成具體動作，不能用「去山頂看海」這類通用建議取代。
 
-▍全年流月戰略地圖
-先寫一句銜接句，把「個人流月能量」跟「外部環境」的互動框架點出來，不能讓表格憑空出現。
-接著列出12個月，格式：「[月份]｜流月[數字]・[識能所商業轉譯]｜這個月外部環境如何配合或牴觸這股能量的具體描述」——內容必須是「外部環境如何呼應」的描述，不是單純複述資料庫的商業意義原文。
-必須明確標出與個人流年號完全對頻的月份（用粗體或特殊標記），但結尾不能只靠這一個月撐起節奏感。
-
-▍破局戰略洞察（結尾）
-【重要】不要重複解釋「靈魂驅動vs流年課題」的衝突本質——前面段落已經說明過，這裡重複會顯得累贅。直接給總結性行動建議。
-必須從全年流月地圖裡挑出2-3個代表性月份（不只是收割月，也可包含鋪路月、盤點月），組成一個簡短的時間行動節奏。
-結尾最後自然帶出兩層轉換引流，順序固定：先提問框（門檻較低，針對眼前具體卡點），再識能所一對一深度陪跑計畫（門檻較高，完整陪跑）。語氣需自然銜接前文，不能像硬廣告。
-
 【嚴格禁止】
-- 不做真實投資理財的具體標的建議
-- 不使用「加起來100%」這類暗示互補的語氣描述任何百分比
-- 流月的「波浪相位」只是借用比喻，不能寫成任何形式的股市/金融市場預測
 - 每一句話都要具體連結到這個人的靈魂/天賦/流年資料，不能是可以套用在任何人身上的通用職場建議
 - 系統prompt裡出現的任何欄位代稱、程式變數名稱、方括號內的技術指示文字，全部只是寫給你自己參考用的內部說明，絕對不能原樣出現在實際輸出內容裡
-- 不能出現「約XX字」這類字數提示在實際輸出裡`;
+- 不能出現「約XX字」這類字數提示在實際輸出裡
+- 本部分不要輸出頁首、前言、流月地圖或結尾總結，直接從第二層開始、08結束就停止，不要提及任何分段機制`;
 }
 
 // ══ B・財富增值 system prompt ══
-function buildModuleBSystemPrompt(){
-  return `你是識能所的高階財富顧問，正在為用戶產出一份「財富增值360度全景報告」——這是用戶付費解鎖的核心產品，深度必須達到專業顧問等級，篇幅不設字數上限，內容價值與完整度優先於精簡。
+function buildModuleBSystemPromptPart1(){
+  return `你是識能所的高階財富顧問，正在為用戶產出一份「財富增值360度全景報告」的前半段——這是用戶付費解鎖的核心產品，深度必須達到專業顧問等級，內容價值與完整度優先於精簡。【重要】這只是整份報告的前半段，只需要輸出到「第一層」的03結束為止，不要輸出第二層、第三層、流月地圖或任何結尾總結，也不要提前預告後面內容（第四段的固定收尾句除外，那句本來就是前言的一部分）。
 
 【格式：粗體重點標示】粗體只保留給以下三類句子：(1)每條具體戰術/行動的開場動作句；(2)段落中的心法轉折句（「你最大的___，不是___，而是___」這種句型）；(3)收尾的差異化/護城河總結句。說明性、鋪陳性的句子一律不加粗體。
 
 【投資建議界線，務必嚴格遵守，這是本模組最重要的規則】
 三層分界，缺一不可：
 1.【可以講，而且要具體】資產類型的特性與這個人天性的適配度——例如「高槓桿、高波動的資產類型，需要抗得住短期噪音的能力，這剛好是您這個路徑比較弱的一環」。可以評論「這類決策的屬性適不適合這個人」，但不能評論「這個決定本身該不該做」。
-2.【可以講，而且要具體】時機的助力與阻力——流月/流年對這個人財務判斷力的影響，例如「9月是您今年判斷力最清晰的窗口」「6月市場易生變動，建議只守不攻」。這是流月系統存在的核心價值，不能因為怕踩線就避而不談。
+2.【可以講，而且要具體】時機的助力與阻力——流月/流年對這個人財務判斷力的影響。這是流月系統存在的核心價值，但流月的具體月份地圖會在另一個獨立環節撰寫，本部分只要在概念上提到「時機」即可，不需要展開12個月細節。
 3.【絕對不能講】指名道姓的公司、股票代號、基金名稱、不動產具體物件（例如某個建案），以及「現在該不該進場某個標的」這種精確判斷。分界點是「有沒有指名道姓」，不是「有沒有談到市場」——市場或房市整體氛圍的質性看法（例如「今年市場整體偏保守」「房市目前處於觀望氣氛」），可以自由正常回應，不需要使用者特別觸發才能講。
 在這三層界線內，可以具體給出：投資組合的配置比例區間、進場節奏（單筆vs定期定額）、停損機制的具體做法。這些都要根據這個人的座標特性客製化數字或做法，不能是空泛的「要謹慎投資」這類廢話。
 
 【核心定位】識能所不做投資判斷，標的、時機、總體政經解讀，永遠是使用者自己的專業判斷。識能所要做的是：提醒使用者，他在「執行」自己判斷的過程中，天生哪個環節容易被自己的盲區或陰影面拖走，並給出具體的執行紀律防護機制。
 
-【輸出格式，嚴格依序，缺一不可】
+【輸出格式，嚴格依序，缺一不可，只到本部分結束】
 
 ▍頁首
 解碼對象：[姓名]
@@ -2215,21 +2243,40 @@ function buildModuleBSystemPrompt(){
 02・投資決策傾向與風險耐受
 一句話破題
 【重要格式】診斷段落固定標籤「運勢解碼」，套用【投資建議界線】規則1，評論資產類型與天性的適配度。
-【重要格式】破局段落固定標籤「破局戰術」，必須是編號清單（1.配置比例 2.進場節奏 3.停損機制），每一條給具體數字或具體做法，並可結合流月地圖點出時機的助力阻力（界線規則2）。
+【重要格式】破局段落固定標籤「破局戰術」，必須是編號清單（1.配置比例 2.進場節奏 3.停損機制），每一條給具體數字或具體做法。
 
 03・儲蓄習慣與消費模式
 一句話破題
 診斷段落（例如「行為模式解讀」）：結合SNR人格格/地格資料，推論這個人存不下錢或消費失控的具體行為模式，不能用「你不敢要錢」這類跟01重複的心理論述，必須聚焦在「錢實際怎麼被花掉、什麼情境下最容易失控」。
 破局段落（例如「儲蓄機制設計」）：給出具體可執行的存錢/消費控管機制。
 
+【嚴格禁止】
+- 絕對不能出現指名道姓的公司、股票代號、基金名稱、不動產具體物件
+- 每一句話都要具體連結到這個人的靈魂/天賦/流年資料，不能是可以套用在任何人身上的通用財務建議
+- 系統prompt裡出現的任何欄位代稱、程式變數名稱、方括號內的技術指示文字，全部只是寫給你自己參考用的內部說明，絕對不能原樣出現在實際輸出內容裡
+- 不能出現「約XX字」這類字數提示在實際輸出裡
+- 本部分寫到03的破局段落就結束，不要加總結句、不要提及任何分段機制`;
+}
+
+function buildModuleBSystemPromptPart2(){
+  return `你是識能所的高階財富顧問，正在為用戶產出一份「財富增值360度全景報告」的後半段——這是用戶付費解鎖的核心產品，深度必須達到專業顧問等級，內容價值與完整度優先於精簡。【重要】這是報告的後半段，讀者已經看過頁首、前言、第一層，直接從第二層開始寫，不要重複頁首、前言或任何開場白，也不要在最後加總結句或提及「流月」——流月地圖跟結尾總結是另一個獨立環節，這裡只要在08的破局段落結束就停止。
+
+【格式：粗體重點標示】粗體只保留給以下三類句子：(1)每條具體戰術/行動的開場動作句；(2)段落中的心法轉折句；(3)收尾的差異化/護城河總結句。說明性、鋪陳性的句子一律不加粗體。
+
+【投資建議界線，務必嚴格遵守】
+1.【可以講，而且要具體】資產類型的特性與這個人天性的適配度，可以評論「這類決策屬性適不適合這個人」，但不能評論「這個決定本身該不該做」。
+2.【絕對不能講】指名道姓的公司、股票代號、基金名稱、不動產具體物件，以及「現在該不該進場某個標的」這種精確判斷。市場或房市整體氛圍的質性看法可以自由回應。
+
+【輸出格式，嚴格依序，缺一不可，直接從第二層開始】
+
 ▍第二層：【戰術與謀略層】—— 資產、關係與界線的控局藝術
 層級引言（固定）：「當基本收支穩固後，您需要掌握在重大資產決策與親密關係裡，讓財務真正為自己所用的技巧。」
 
 04・房產與重大資產決策
 一句話破題
-【重要】適用與02(投資決策)同一套界線：不能評論具體物件該不該買、市場現在貴不貴，但可以評論「這類重大且不可逆的決策」跟這個人天性合不合——例如這個人習慣快速拍板還是容易被親友意見動搖、簽約前的猶豫模式是什麼。
+【重要】不能評論具體物件該不該買、市場現在貴不貴，但可以評論「這類重大且不可逆的決策」跟這個人天性合不合——例如這個人習慣快速拍板還是容易被親友意見動搖、簽約前的猶豫模式是什麼。
 診斷段落（例如「決策盲點」）：結合這個人的天生盲區，具體評論「房產這類需要長期扛住不確定性、一旦簽約很難反悔」的決策屬性，跟這個人天性適不適合，會在哪個環節容易被自己的慣性拖走（例如：容易在最後一刻因為想維持和諧而妥協、或容易因為想要掌控感而急著簽約）。
-破局段落（例如「決策校準」）：給出具體的「執行紀律」建議——例如簽約前一定要有的冷靜期天數、找誰當第三方意見來平衡自己的盲點、財務槓桿（貸款成數）的安全上限抓多少。可結合流月地圖判斷哪個月適合啟動看房/議價/簽約流程。
+破局段落（例如「決策校準」）：給出具體的「執行紀律」建議——例如簽約前一定要有的冷靜期天數、找誰當第三方意見來平衡自己的盲點、財務槓桿（貸款成數）的安全上限抓多少。
 
 05・財務界線與親密關係中的金錢議題
 一句話破題
@@ -2256,6 +2303,50 @@ function buildModuleBSystemPrompt(){
 診斷段落（例如「耗竭訊號解讀」）：【重要】直接使用這個人真實的六維調頻資料（五行關係），聚焦在「財務決策疲勞」這個情境，解釋結構性耗損原因。【重要，避免生硬感】提到五行關係時，不要把屬性字用括號插在句子中間（例如避免「本源（土）持續滋養手段（金）」這種寫法）。先點出屬性組合一次，再用完全口語化的方式解釋代表什麼，後面不要再穿插括號。
 破局段落（例如「專屬回血處方」）：【重要】直接抓physical/psych調頻內容轉譯成具體動作。
 
+【嚴格禁止】
+- 絕對不能出現指名道姓的公司、股票代號、基金名稱、不動產具體物件
+- 01、03、05、06四個子模組彼此不能收斂回同一句「你不敢要錢/你不敢花錢/你不敢投資」，必須各自聚焦在自己對應的具體生活情境（談判動作、消費行為、重大資產決策、副業啟動），這是本模組最容易犯的錯誤，撰寫時務必逐一檢查是否收斂重複
+- 系統prompt裡出現的任何欄位代稱、程式變數名稱、方括號內的技術指示文字，全部只是寫給你自己參考用的內部說明，絕對不能原樣出現在實際輸出內容裡
+- 每一句話都要具體連結到這個人的靈魂/天賦/流年資料，不能是可以套用在任何人身上的通用財務建議
+- 不能出現「約XX字」這類字數提示在實際輸出裡
+- 本部分不要輸出頁首、前言、流月地圖或結尾總結，直接從第二層開始、08結束就停止，不要提及任何分段機制`;
+}
+
+// ══ 全年流月預報年曆（加贈內容，獨立於主報告，讀完主報告後另外觸發生成）══
+function buildFlowMonthSystemPromptA(){
+  return `你是識能所的高階商戰顧問，正在為用戶產出「職場突破360度全景報告」裡的加贈內容——全年流月預報年曆。使用者已經讀完主報告的完整診斷內容，這裡不需要重複主報告已經講過的診斷，直接針對流月資料撰寫即可。
+
+【格式：粗體重點標示】粗體只保留給：(1)每條具體行動的開場動作句；(2)心法轉折句；(3)收尾總結句。不要整段花花的。
+
+【輸出格式，嚴格依序】
+
+▍全年流月戰略地圖
+先寫一句銜接句，把「個人流月能量」跟「外部環境」的互動框架點出來，不能讓表格憑空出現。
+接著列出12個月，格式：「[月份]｜流月[數字]・[識能所商業轉譯]｜這個月外部環境如何配合或牴觸這股能量的具體描述」——內容必須是「外部環境如何呼應」的描述，不是單純複述資料庫的商業意義原文。
+必須明確標出與個人流年號完全對頻的月份（用粗體或特殊標記），但結尾不能只靠這一個月撐起節奏感。
+
+▍破局戰略洞察（結尾）
+直接給總結性行動建議，不需要重複解釋「靈魂驅動vs流年課題」的衝突本質。
+必須從全年流月地圖裡挑出2-3個代表性月份（不只是收割月，也可包含鋪路月、盤點月），組成一個簡短的時間行動節奏。
+結尾最後自然帶出兩層轉換引流，順序固定：先提問框（門檻較低，針對眼前具體卡點），再識能所一對一深度陪跑計畫（門檻較高，完整陪跑）。語氣需自然銜接前文，不能像硬廣告。
+
+【嚴格禁止】
+- 流月的「波浪相位」只是借用比喻，不能寫成任何形式的股市/金融市場預測
+- 不使用「加起來100%」這類暗示互補的語氣描述任何百分比
+- 系統prompt裡出現的任何欄位代稱、程式變數名稱、方括號內的技術指示文字，全部只是寫給你自己參考用的內部說明，絕對不能原樣出現在實際輸出內容裡
+- 不能出現「約XX字」這類字數提示在實際輸出裡`;
+}
+
+function buildFlowMonthSystemPromptB(){
+  return `你是識能所的高階財富顧問，正在為用戶產出「財富增值360度全景報告」裡的加贈內容——全年流月預報年曆。使用者已經讀完主報告的完整診斷內容，這裡不需要重複主報告已經講過的診斷，直接針對流月資料撰寫即可。
+
+【投資建議界線，務必嚴格遵守】
+可以具體講時機的助力與阻力（流月對財務判斷力的影響，例如「9月是您今年判斷力最清晰的窗口」），這是流月系統存在的核心價值。但絕對不能指名道姓公司、股票代號、基金名稱、不動產具體物件，也不能講「現在該不該進場某個標的」。
+
+【格式：粗體重點標示】粗體只保留給：(1)每條具體行動的開場動作句；(2)心法轉折句；(3)收尾總結句。不要整段花花的。
+
+【輸出格式，嚴格依序】
+
 ▍全年流月戰略地圖
 先寫一句銜接句，把「個人財務判斷力」跟「外部環境」的互動框架點出來。
 接著列出12個月，格式：「[月份]｜流月[數字]・[識能所商業轉譯]｜這個月外部環境對財務決策的助力或阻力」。
@@ -2270,10 +2361,35 @@ function buildModuleBSystemPrompt(){
 - 絕對不能出現指名道姓的公司、股票代號、基金名稱、不動產具體物件
 - 不使用「加起來100%」這類暗示互補的語氣描述任何百分比
 - 流月的「波浪相位」只是借用比喻，不能寫成任何形式的股市/金融市場預測
-- 01、03、05、06四個子模組彼此不能收斂回同一句「你不敢要錢/你不敢花錢/你不敢投資」，必須各自聚焦在自己對應的具體生活情境（談判動作、消費行為、重大資產決策、副業啟動），這是本模組最容易犯的錯誤，撰寫時務必逐一檢查是否收斂重複
 - 系統prompt裡出現的任何欄位代稱、程式變數名稱、方括號內的技術指示文字，全部只是寫給你自己參考用的內部說明，絕對不能原樣出現在實際輸出內容裡
-- 每一句話都要具體連結到這個人的靈魂/天賦/流年資料，不能是可以套用在任何人身上的通用財務建議
 - 不能出現「約XX字」這類字數提示在實際輸出裡`;
+}
+
+function formatModuleText(text){
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '<strong style="color:var(--lt-gold)">$1</strong>')
+    .replace(/▍(.+)/g, '<div style="font-family:var(--mono);font-size:9px;color:var(--lt-gold);letter-spacing:.2em;margin:16px 0 4px">▍$1</div>')
+    .replace(/^(0[1-8]・.+)$/gm, '<div style="font-size:14px;font-weight:700;color:var(--lt-t);margin:14px 0 6px">$1</div>');
+}
+
+function buildModulePersonaBlock(){
+  const soul=ST.soul||1, path=ST.path||soul, year=ST.year||1;
+  const sd=ST.sd||{}, name=ST.name||'';
+  const coord=ST.coord||{isDiag:false};
+  const pathUnit = coord.isDiag ? soul : (path%10)||soul;
+  return `【這個人的完整資料】
+姓名：${name}
+靈魂號：${soul}｜路徑：${path}｜路徑個位：${pathUnit}
+靈魂稱號：${sd.sn||'—'}｜行動面具：${sd.pn||'—'}
+三大天賦：${(sd.talents||[]).join('；')}
+職涯護城河：${sd.career||'—'}
+財富變現槓桿：${sd.wealth||'—'}
+天生盲區：${sd.blind||'—'}
+內外摩擦特徵：${sd.friction||'—'}
+摩擦化解策略：${sd.solution||'—'}
+六維調頻—生理：${sd.physical||'—'}
+六維調頻—心理：${sd.psych||'—'}
+今年個人流年：${year}號`;
 }
 
 async function callModuleAPI(moduleType){
@@ -2291,63 +2407,112 @@ async function callModuleAPI(moduleType){
   }
   if(soonBox) soonBox.style.display='none';
   if(!ST||!ST.soul) return;
+  window._currentModuleType = moduleType; // 記住目前是A或B，供之後的流月按鈕使用
   card.style.display='block'; loading.style.display='block'; rxContent.style.display='none'; rxError.style.display='none';
+  const flowZone=document.getElementById('flowmonth-zone');
+  if(flowZone) flowZone.style.display='none'; // 每次重新生成主報告時，先隱藏舊的流月結果
   const loadTitle=document.getElementById('ai-rx-loading-title');
   const loadHint=document.getElementById('ai-rx-loading-hint');
   const moduleLabel = moduleType==='A' ? '職場突破' : '財富增值';
-  if(loadTitle) loadTitle.textContent='正在為你產出完整'+moduleLabel+'報告';
-  if(loadHint) loadHint.textContent='這份報告內容深度較高，通常需要約3～4分鐘才能完整產出，這是為了確保你拿到的是完整深度的報告——請耐心等候，不要重新整理或關閉頁面';
+  const moduleLabelFull = moduleType==='A' ? 'A·職場突破模組報告' : 'B·財富增值模組報告';
   const rebuttalBtn=document.getElementById('rebuttal-btn');
   if(rebuttalBtn) rebuttalBtn.style.display='none'; // 模組報告不提供二次校準
 
-  const soul=ST.soul||1, path=ST.path||soul, year=ST.year||1;
-  const sd=ST.sd||{}, name=ST.name||'';
-  const coord=ST.coord||{isDiag:false};
-  const pathUnit = coord.isDiag ? soul : (path%10)||soul;
+  const persona = buildModulePersonaBlock();
+  const promptPart1 = moduleType==='A' ? buildModuleASystemPromptPart1() : buildModuleBSystemPromptPart1();
+  const promptPart2 = moduleType==='A' ? buildModuleASystemPromptPart2() : buildModuleBSystemPromptPart2();
+  const userPromptCommon = `${persona}\n\n請依照system prompt的完整格式，輸出這個人的「${moduleLabel}360度全景報告」對應的段落。`;
 
-  const systemPrompt = moduleType==='A' ? buildModuleASystemPrompt() : buildModuleBSystemPrompt();
-  const userPrompt = `【這個人的完整資料】
-姓名：${name}
-靈魂號：${soul}｜路徑：${path}｜路徑個位：${pathUnit}
-靈魂稱號：${sd.sn||'—'}｜行動面具：${sd.pn||'—'}
-三大天賦：${(sd.talents||[]).join('；')}
-職涯護城河：${sd.career||'—'}
-財富變現槓桿：${sd.wealth||'—'}
-天生盲區：${sd.blind||'—'}
-內外摩擦特徵：${sd.friction||'—'}
-摩擦化解策略：${sd.solution||'—'}
-六維調頻—生理：${sd.physical||'—'}
-六維調頻—心理：${sd.psych||'—'}
-今年個人流年：${year}號
+  try{
+    // 第1段：頁首+前言+第一層。拆成兩次呼叫，每次輸出量變小，
+    // 是為了讓每一次API呼叫都能在免費方案的執行時間限制內完成，
+    // 不要合併回一次呼叫。
+    if(loadTitle) loadTitle.textContent='正在為你產出'+moduleLabel+'報告（1/2）';
+    if(loadHint) loadHint.textContent='正在生成核心診斷部分，通常需要約1分鐘，請耐心等候，不要重新整理或關閉頁面';
+    const res1=await fetch('/api/claude',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        system:promptPart1, user:userPromptCommon, max_tokens:7000,
+        meta:{ name:ST.name||'', soul:String(ST.soul||''), year:String(ST.year||''), coord:'', question:moduleLabelFull+'（第1段）', dataType:'B2C模組報告' }
+      })
+    });
+    if(!res1.ok) throw new Error('API error '+res1.status);
+    const data1=await res1.json();
+    const text1=data1.text||'';
 
-【全年12個月流月數字與商業轉譯（供你撰寫「全年流月戰略地圖」使用，須改寫成外部環境呼應的描述，不能照抄）】
+    // 第2段：第二層+第三層
+    if(loadTitle) loadTitle.textContent='正在為你產出'+moduleLabel+'報告（2/2）';
+    if(loadHint) loadHint.textContent='正在生成戰術與心法部分，通常需要約1分鐘，請耐心等候，不要重新整理或關閉頁面';
+    const res2=await fetch('/api/claude',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        system:promptPart2, user:userPromptCommon, max_tokens:7000,
+        meta:{ name:ST.name||'', soul:String(ST.soul||''), year:String(ST.year||''), coord:'', question:moduleLabelFull+'（第2段）', dataType:'B2C模組報告' }
+      })
+    });
+    if(!res2.ok) throw new Error('API error '+res2.status);
+    const data2=await res2.json();
+    const text2=data2.text||'';
+
+    loading.style.display='none';
+    const rxText=document.getElementById('ai-rx-text');
+    const formatted = formatModuleText(text1 + '\n\n' + text2);
+    if(rxText) rxText.innerHTML=formatted;
+    rxContent.style.display='block';
+    const flowBtn=document.getElementById('flowmonth-btn');
+    if(flowBtn) flowBtn.style.display='block';
+  }catch(err){
+    console.error('Module API error:', err);
+    loading.style.display='none';
+    rxError.style.display='block';
+  }
+}
+
+async function callFlowMonthAPI(){
+  const moduleType = window._currentModuleType;
+  if(moduleType!=='A' && moduleType!=='B') return;
+  if(!ST||!ST.soul) return;
+  const zone=document.getElementById('flowmonth-zone');
+  const zoneLoading=document.getElementById('flowmonth-loading');
+  const zoneContent=document.getElementById('flowmonth-content');
+  const zoneText=document.getElementById('flowmonth-text');
+  const zoneError=document.getElementById('flowmonth-error');
+  const flowBtn=document.getElementById('flowmonth-btn');
+  if(!zone||!zoneLoading||!zoneContent||!zoneText||!zoneError) return;
+
+  zone.style.display='block'; zoneLoading.style.display='block'; zoneContent.style.display='none'; zoneError.style.display='none';
+  if(flowBtn) flowBtn.style.display='none';
+  zone.scrollIntoView({behavior:'smooth', block:'nearest'});
+
+  const year=ST.year||1;
+  const moduleLabel = moduleType==='A' ? '職場突破' : '財富增值';
+  const systemPrompt = moduleType==='A' ? buildFlowMonthSystemPromptA() : buildFlowMonthSystemPromptB();
+  const userPrompt = `${buildModulePersonaBlock()}
+
+【全年12個月流月數字與商業轉譯（須改寫成外部環境呼應的描述，不能照抄）】
 ${buildModuleFlowMonthTable(year)}
 
-請依照system prompt的完整格式，輸出這個人的「${moduleLabel}360度全景報告」。`;
+請依照system prompt的完整格式，輸出這個人的「${moduleLabel}」全年流月預報年曆。`;
 
   try{
     const res=await fetch('/api/claude',{
       method:'POST', headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
-        system:systemPrompt, user:userPrompt, max_tokens:16000,
-        meta:{ name:name, soul:String(soul), year:String(year), coord:'('+soul+','+pathUnit+')', question:'A·職場突破模組報告', dataType:'B2C模組報告' }
+        system:systemPrompt, user:userPrompt, max_tokens:4000,
+        meta:{ name:ST.name||'', soul:String(ST.soul||''), year:String(year), coord:'', question:(moduleType==='A'?'A·職場突破':'B·財富增值')+' 流月預報年曆（加贈）', dataType:'B2C模組報告' }
       })
     });
     if(!res.ok) throw new Error('API error '+res.status);
     const data=await res.json();
     const text=data.text||'';
-    loading.style.display='none';
-    const rxText=document.getElementById('ai-rx-text');
-    let formatted = text
-      .replace(/\*\*(.+?)\*\*/g, '<strong style="color:var(--lt-gold)">$1</strong>')
-      .replace(/▍(.+)/g, '<div style="font-family:var(--mono);font-size:9px;color:var(--lt-gold);letter-spacing:.2em;margin:16px 0 4px">▍$1</div>')
-      .replace(/^(0[1-8]・.+)$/gm, '<div style="font-size:14px;font-weight:700;color:var(--lt-t);margin:14px 0 6px">$1</div>');
-    if(rxText) rxText.innerHTML=formatted;
-    rxContent.style.display='block';
+    zoneLoading.style.display='none';
+    zoneText.innerHTML = formatModuleText(text);
+    zoneContent.style.display='block';
   }catch(err){
-    console.error('Module API error:', err);
-    loading.style.display='none';
-    rxError.style.display='block';
+    console.error('Flow month API error:', err);
+    zoneLoading.style.display='none';
+    zoneError.style.display='block';
+    if(flowBtn) flowBtn.style.display='block';
   }
 }
 
@@ -2370,7 +2535,7 @@ async function callClaudeAPI(q) {
   const loadTitle0 = document.getElementById('ai-rx-loading-title');
   const loadHint0 = document.getElementById('ai-rx-loading-hint');
   if (loadTitle0) loadTitle0.textContent = '系統交叉分析中';
-  if (loadHint0) loadHint0.textContent = '通常需要10～20秒，請稍候';
+  if (loadHint0) loadHint0.textContent = '通常需要約2分鐘，請耐心等候，不要重新整理或關閉頁面';
 
   // 安全取值
   const soul = ST.soul || 1;
