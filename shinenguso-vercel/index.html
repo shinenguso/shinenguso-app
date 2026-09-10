@@ -2690,6 +2690,8 @@ ${targetAnalysis}
     );
     if (rxText) rxText.innerHTML = formatted;
     rxContent.style.display = 'block';
+    const rebuttalBtn0 = document.getElementById('rebuttal-btn');
+    if (rebuttalBtn0) rebuttalBtn0.style.display = 'block'; // 提問框的抗辯機制要顯示回來（可能被前一次模組報告隱藏過）
   } catch (err) {
     console.error('Claude API error:', err);
     loading.style.display = 'none';
