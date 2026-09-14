@@ -748,10 +748,11 @@ window.addEventListener('load', function(){
     <div id="s2-radar-full"></div>
   </div>
 
-  <!-- 先天vs現況六維對照（單條雙標記，2026/09/07新增） -->
+  <!-- 先天vs現況六維對照（單條雙標記，2026/09/07新增，含呼應訊噪比+盲區連結+建議） -->
   <div class="lt-card" id="s2-dynamic-card">
     <span class="lt-lbl">你的先天樣子，跟現在的樣子</span>
-    <p style="font-size:11px;color:var(--lt-t3);line-height:1.7;margin:6px 0 16px">每一條線上有兩個點——淺色是你天生的位置，深色是你現在被推動到的位置。兩點重疊，代表這裡沒有太大變化。</p>
+    <p id="s2-dynamic-echo" style="font-size:12px;color:var(--lt-t2);line-height:1.75;margin:8px 0 4px;padding:10px 12px;background:var(--lt2);border-radius:8px">—</p>
+    <p style="font-size:11px;color:var(--lt-t3);line-height:1.7;margin:10px 0 16px">每一條線上有兩個點——淺色是你天生的位置，深色是你現在被推動到的位置。兩點重疊，代表這裡沒有太大變化。</p>
     <div id="s2-dynamic-list"></div>
     <p id="s2-dynamic-summary" style="font-size:13px;color:var(--lt-t2);line-height:1.85;margin-top:18px;padding-top:16px;border-top:1px solid var(--lt-b2)">—</p>
   </div>
@@ -858,6 +859,7 @@ window.addEventListener('load', function(){
       <div class="mod-card" onclick="selMod(this,'A')">
         <div class="mod-name">A · 職場突破<span class="mod-q-toggle" onclick="event.stopPropagation();this.closest('.mod-card').classList.toggle('show-q')">問題▾</span></div>
         <div class="mod-d">位置、影響力、下一步</div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--lt-gold);letter-spacing:.05em;margin-top:4px">NT$1200・測試期間免費體驗</div>
         <ul class="mod-q">
           <li>該不該換工作/轉行？</li>
           <li>為什麼努力主管看不到？</li>
@@ -872,6 +874,7 @@ window.addEventListener('load', function(){
       <div class="mod-card" onclick="selMod(this,'B')">
         <div class="mod-name">B · 財富增值<span class="mod-q-toggle" onclick="event.stopPropagation();this.closest('.mod-card').classList.toggle('show-q')">問題▾</span></div>
         <div class="mod-d">金錢頻率、財富引擎</div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--lt-gold);letter-spacing:.05em;margin-top:4px">NT$1200・測試期間免費體驗</div>
         <ul class="mod-q">
           <li>該不該開口要加薪？</li>
           <li>我適合怎麼投資？</li>
@@ -888,7 +891,24 @@ window.addEventListener('load', function(){
     </div>
     <p style="font-size:10px;color:var(--lt-t3);text-align:center;margin-top:-6px;margin-bottom:4px">💡 滑鼠移到卡片上，可以看到這份報告會回答的完整問題</p>
     <button class="btn-lt" id="s2-mod-btn" onclick="goS3mod()" disabled style="margin-top:10px;width:100%">查看選定模組報告 →</button>
+    <button onclick="showFlowCalendar()" style="width:100%;margin-top:10px;background:transparent;border:1px solid var(--lt-gold);border-radius:10px;padding:12px;cursor:pointer;font-size:13px;color:var(--lt-gold);font-family:var(--serif)">
+      📅 領取你的全年流月年曆<span style="display:block;font-size:9px;font-family:var(--mono);letter-spacing:.05em;opacity:.8;margin-top:3px">NT$800・測試期間免費贈送・立即查看不用等待</span>
+    </button>
     <button class="btn-line" onclick="goLine()">💬 &nbsp;一對一深度陪跑（LINE）</button>
+  </div>
+</div>
+</div>
+
+<!-- ══ 全年流月年曆（獨立查表，不呼叫AI，可重複查看）══ -->
+<div class="screen lt-bg" id="s-flow-calendar" style="align-items:flex-start">
+<div class="wrap">
+  <div class="top-bar">
+    <button onclick="showScreen('s-s2')" style="background:transparent;border:none;cursor:pointer;font-size:12px;color:var(--lt-t3);font-family:var(--mono);letter-spacing:.08em;padding:0;display:flex;align-items:center;gap:4px">← 決策神經</button>
+    <span class="top-badge">你的全年流月年曆</span>
+  </div>
+  <div class="lt-card">
+    <p style="font-size:12px;color:var(--lt-t3);line-height:1.7;margin-bottom:16px">這是你今年12個月的流月方向，直接查表得出，不需要等待生成——每個月的商業意義，供你安排行動節奏參考。</p>
+    <div id="flow-calendar-list" style="font-size:13px;color:var(--lt-t);line-height:2.2"></div>
   </div>
 </div>
 </div>
@@ -1016,6 +1036,7 @@ window.addEventListener('load', function(){
       <div class="mod-card" onclick="selModS4(this,'A')">
         <div class="mod-name">A · 職場突破<span class="mod-q-toggle" onclick="event.stopPropagation();this.closest('.mod-card').classList.toggle('show-q')">問題▾</span></div>
         <div class="mod-d">位置、影響力、下一步</div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--lt-gold);letter-spacing:.05em;margin-top:4px">NT$1200・測試期間免費體驗</div>
         <ul class="mod-q">
           <li>該不該換工作/轉行？</li>
           <li>為什麼努力主管看不到？</li>
@@ -1030,6 +1051,7 @@ window.addEventListener('load', function(){
       <div class="mod-card" onclick="selModS4(this,'B')">
         <div class="mod-name">B · 財富增值<span class="mod-q-toggle" onclick="event.stopPropagation();this.closest('.mod-card').classList.toggle('show-q')">問題▾</span></div>
         <div class="mod-d">金錢頻率、財富引擎</div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--lt-gold);letter-spacing:.05em;margin-top:4px">NT$1200・測試期間免費體驗</div>
         <ul class="mod-q">
           <li>該不該開口要加薪？</li>
           <li>我適合怎麼投資？</li>
@@ -1608,6 +1630,27 @@ function goS3q(){
   const targetName=(document.getElementById('s2-target-name')&&document.getElementById('s2-target-name').value.trim())||'';
   _goS3(q, targetName);
 }
+// 全年流月年曆：純查表，不呼叫AI，可重複查看，不佔用token
+function showFlowCalendar(){
+  if(!ST || !ST.year){ alert('請先完成頻率座標測驗'); return; }
+  const personalYear = ST.year; // 個人流年，與模組報告使用同一個變數，確保一致
+  const rows = [];
+  for(let m=1;m<=12;m++){
+    const fm = calcFlowMonth(personalYear, m);
+    const info = FLOW_MONTH_DB[fm] || {};
+    rows.push(`<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--lt-b2)">
+      <span style="font-family:var(--mono);font-size:11px;color:var(--lt-t3);min-width:36px">${m}月</span>
+      <div style="flex:1">
+        <span style="font-weight:600;color:var(--lt-gold)">流月${fm}號・${info.label||'—'}</span>
+        <span style="color:var(--lt-t3);font-size:11px">（${info.climate||''}）</span>
+        <p style="font-size:12px;color:var(--lt-t2);margin-top:2px">${info.strategy||''}</p>
+      </div>
+    </div>`);
+  }
+  document.getElementById('flow-calendar-list').innerHTML = rows.join('');
+  showScreen('s-flow-calendar');
+}
+
 function goS3mod(){
   if(!window._mod){alert('請先選擇模組');return;}
   showScreen('s-s3');
@@ -1925,7 +1968,7 @@ function renderS1(){
           <div class="radar-bg"><div class="radar-fill" style="width:${pct}%"></div></div>
           <span class="radar-pct">${val.toFixed(1)}</span>
         </div>
-        <p style="font-size:12px;color:var(--lt-t3);line-height:1.7;margin-top:4px">${getSixDimDesc(d,val)}</p>
+        <p style="font-size:12px;color:var(--lt-t3);line-height:1.7;margin-top:4px;margin-left:86px">${getSixDimDesc(d,val)}</p>
       </div>`;
     }).join('');
     document.getElementById('s1-sixdim-summary').textContent = buildSixDimSummary(sixDimA.dims);
@@ -2034,6 +2077,12 @@ function renderS2(){
 
   // 先天vs現況六維對照（單條雙標記，只在有變化的維度加註解）
   if(ST.sixDimA && ST.sixDimCurrent){
+    // 方向一：開場呼應頻率座標的訊噪比數字
+    if(ST.dynamicSNR){
+      document.getElementById('s2-dynamic-echo').textContent =
+        `你在頻率座標看到的訊噪比${ST.dynamicSNR.index}%（${ST.dynamicSNR.level}），具體來說，就是下面這六條線加總起來的結果——現在攤開來看，是哪幾個維度在拉扯。`;
+    }
+
     document.getElementById('s2-dynamic-list').innerHTML = SIX_DIMS.map(d=>{
       const before = ST.sixDimA.dims[d];
       const after = ST.sixDimCurrent[d];
@@ -2043,10 +2092,10 @@ function renderS2(){
       const dotClass = Math.abs(diff)<0.3 ? 'same' : (diff>0 ? 'spike' : 'collapse');
       let note = '';
       if(Math.abs(diff)>=0.3){
-        if(after>10) note = `這裡被推向了超乎先天的巔峰表現，不一定是壞事，但值得留意是不是過度用力。`;
-        else if(after<1) note = `這裡明顯發揮不出來，跟你先天的樣子有不小的落差。`;
-        else if(diff>0) note = `現在比先天的你更用力一點，往上偏了${diff.toFixed(1)}分。`;
-        else note = `現在比先天的你發揮得少一點，往下偏了${Math.abs(diff).toFixed(1)}分。`;
+        if(after>10) note = `現在是${after.toFixed(1)}分，被推向了超乎先天（${before.toFixed(1)}分）的巔峰表現，不一定是壞事，但值得留意是不是過度用力。`;
+        else if(after<1) note = `現在是${after.toFixed(1)}分，明顯發揮不出來，跟你先天的${before.toFixed(1)}分有不小的落差。`;
+        else if(diff>0) note = `現在是${after.toFixed(1)}分，比先天的${before.toFixed(1)}分更用力一點，往上偏了${diff.toFixed(1)}分。`;
+        else note = `現在是${after.toFixed(1)}分，比先天的${before.toFixed(1)}分發揮得少一點，往下偏了${Math.abs(diff).toFixed(1)}分。`;
       }
       return `<div class="dyn-row">
         <div class="dyn-row-top">
@@ -2060,17 +2109,22 @@ function renderS2(){
       </div>`;
     }).join('');
 
-    // 小結論：找出變化最大的維度，講一句具體的話
+    // 小結論：找出變化最大的維度，方向二(連結盲區)+方向三(具體建議)
     const allDiffs = SIX_DIMS.map(d => ({dim:d, diff:ST.sixDimCurrent[d]-ST.sixDimA.dims[d]}));
     allDiffs.sort((a,b)=>Math.abs(b.diff)-Math.abs(a.diff));
     const biggest = allDiffs[0];
     let summaryText;
     if(Math.abs(biggest.diff)<0.3){
       summaryText = '整體來看，你現在的樣子跟先天的你相當接近，沒有哪個面向被明顯推動。';
-    } else if(biggest.diff>0){
-      summaryText = `整體來看，變化最明顯的是「${SIX_DIM_LABELS[biggest.dim]}」——這是你現在被推得最用力的地方，值得你留意這股力量從哪裡來、是不是該收一點。`;
     } else {
-      summaryText = `整體來看，變化最明顯的是「${SIX_DIM_LABELS[biggest.dim]}」——這是你現在被壓得最緊的地方，值得你留意是什麼在讓它發揮不出來。`;
+      const blindText = (ST.sd && ST.sd.blind) ? ST.sd.blind : '';
+      const blindShort = blindText ? blindText.slice(0, 40) : '';
+      const echoBlind = blindShort ? `這正好呼應你天生的盲區：「${blindShort}⋯」，壓力一來，這個盲區就容易被觸發。` : '';
+      if(biggest.diff>0){
+        summaryText = `整體來看，變化最明顯的是「${SIX_DIM_LABELS[biggest.dim]}」——這是你現在被推得最用力的地方。${echoBlind}具體可以做的：留意這股用力是不是在補償某個不安，練習在動手前先停一拍，問自己「這次是真的需要，還是慣性反應」。`;
+      } else {
+        summaryText = `整體來看，變化最明顯的是「${SIX_DIM_LABELS[biggest.dim]}」——這是你現在被壓得最緊的地方。${echoBlind}具體可以做的：找一件小事，刻意練習用這個能力去處理，不用等到準備好，先做一次比想十次更有用。`;
+      }
     }
     document.getElementById('s2-dynamic-summary').textContent = summaryText;
   }
