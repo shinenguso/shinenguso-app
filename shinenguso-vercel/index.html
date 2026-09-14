@@ -639,7 +639,7 @@ window.addEventListener('load', function(){
       <div class="snr-box snr-s"><span class="snr-big" id="s1-spct">—</span><span class="snr-lbl">訊噪比指數<span style="opacity:.7">＊</span></span></div>
     </div>
     <p class="snr-explain" id="s1-snr-explain">—</p>
-    <p style="font-size:11px;color:var(--lt-t3);margin-top:6px">訊噪比越高，代表你現在的樣子越貼近先天原本的你；越低，代表現在的你被推得離原本的樣子越遠。＊完整成因，決策神經解剖裡有解答</p>
+    <p style="font-size:11px;color:var(--lt-t3);margin-top:6px">訊噪比越高，代表你現在的樣子越貼近先天原本的你；越低，代表現在的你被推得離原本的樣子越遠。後面括號裡的點數，代表你現在整體被往上推、還是被往下壓的幅度——數字越大，代表這股推力越明顯。＊完整成因，決策神經解剖裡有解答</p>
   </div>
 
   <!-- 先天六維（完整揭露，不隱藏，含個別說明與總結） -->
@@ -891,8 +891,8 @@ window.addEventListener('load', function(){
     </div>
     <p style="font-size:10px;color:var(--lt-t3);text-align:center;margin-top:-6px;margin-bottom:4px">💡 滑鼠移到卡片上，可以看到這份報告會回答的完整問題</p>
     <button class="btn-lt" id="s2-mod-btn" onclick="goS3mod()" disabled style="margin-top:10px;width:100%">查看選定模組報告 →</button>
-    <button onclick="showFlowCalendar()" style="width:100%;margin-top:10px;background:transparent;border:1px solid var(--lt-gold);border-radius:10px;padding:12px;cursor:pointer;font-size:13px;color:var(--lt-gold);font-family:var(--serif)">
-      📅 領取你的全年流月年曆<span style="display:block;font-size:9px;font-family:var(--mono);letter-spacing:.05em;opacity:.8;margin-top:3px">NT$800・測試期間免費贈送・立即查看不用等待</span>
+    <button onclick="showGiftScreen()" style="width:100%;margin-top:10px;background:transparent;border:1px solid var(--lt-gold);border-radius:10px;padding:12px;cursor:pointer;font-size:13px;color:var(--lt-gold);font-family:var(--serif)">
+      🎁 領取你的專屬禮物
     </button>
     <button class="btn-line" onclick="goLine()">💬 &nbsp;一對一深度陪跑（LINE）</button>
   </div>
@@ -909,6 +909,23 @@ window.addEventListener('load', function(){
   <div class="lt-card">
     <p style="font-size:12px;color:var(--lt-t3);line-height:1.7;margin-bottom:16px">這是你今年12個月的流月方向，直接查表得出，不需要等待生成——每個月的商業意義，供你安排行動節奏參考。</p>
     <div id="flow-calendar-list" style="font-size:13px;color:var(--lt-t);line-height:2.2"></div>
+  </div>
+</div>
+</div>
+
+<!-- ══ 專屬禮物（建置中，含體驗代碼輸入UI架子，驗證邏輯待金流系統確定後補上）══ -->
+<div class="screen lt-bg" id="s-gift" style="align-items:flex-start">
+<div class="wrap">
+  <div class="top-bar">
+    <button onclick="showScreen('s-s2')" style="background:transparent;border:none;cursor:pointer;font-size:12px;color:var(--lt-t3);font-family:var(--mono);letter-spacing:.08em;padding:0;display:flex;align-items:center;gap:4px">← 決策神經</button>
+    <span class="top-badge">你的專屬禮物</span>
+  </div>
+  <div class="lt-card" style="text-align:center;padding:32px 22px">
+    <div style="font-size:28px;margin-bottom:10px">🎁</div>
+    <p style="font-family:var(--serif);font-size:15px;color:var(--lt-t);font-weight:700;margin-bottom:10px">這個功能還在建置中</p>
+    <p style="font-size:12px;color:var(--lt-t3);line-height:1.7;margin-bottom:20px">輸入你的專屬體驗代碼，即可免費獲得一次提問框服務——即將開放，敬請期待。</p>
+    <input id="gift-passcode-input" type="text" placeholder="請輸入體驗代碼" style="width:100%;padding:13px 16px;border-radius:10px;border:1.5px solid var(--lt-b);background:var(--lt3);color:var(--lt-t);font-size:14px;font-family:var(--sans);letter-spacing:.08em;box-sizing:border-box;outline:none;margin-bottom:10px"/>
+    <button class="btn-outline" disabled style="opacity:.5;cursor:default">兌換（即將開放）</button>
   </div>
 </div>
 </div>
@@ -958,7 +975,7 @@ window.addEventListener('load', function(){
     <div id="ai-rx-content" style="display:none">
       <p style="font-family:var(--serif);font-size:13px;color:var(--lt-t);line-height:1.9;white-space:pre-wrap" id="ai-rx-text"></p>
       <div style="margin-top:16px">
-        <button class="btn-outline" onclick="callFlowMonthAPI()" style="width:100%;display:none;border-color:var(--lt-gold);color:var(--lt-gold)" id="flowmonth-btn">🗓 產生我的全年流月預報年曆（加贈）</button>
+        <button class="btn-outline" onclick="callFlowMonthAPI()" style="width:100%;display:none;border-color:var(--lt-gold);color:var(--lt-gold)" id="flowmonth-btn">🗓 產生我的全年流月預報年曆（加贈）<span style="display:block;font-size:9px;font-family:var(--mono);letter-spacing:.05em;opacity:.8;margin-top:3px">NT$600・測試期間免費體驗</span></button>
       </div>
       <div id="flowmonth-zone" style="display:none;margin-top:16px">
         <div style="background:var(--lt2);border:1px solid var(--lt-gold);border-radius:12px;padding:16px">
@@ -1538,7 +1555,7 @@ function showScreen(id){
 // ── 動態SNR：問卷UI（首次填寫，姓名生日之後、Hook頁之前）──
 const DQ_QUESTIONS = [
   {n:1, text:'最近你對周遭人事物的敏銳度，跟平常比起來：', opts:['變得很遲鈍，很多事後來才發現','稍微沒那麼敏銳','大致跟平常差不多，只是偶爾恍神','比平常更敏銳，很多細節都逃不過你']},
-  {n:2, text:'最近做決定時，跟平常的你比起來，你的冷靜分析能力如何：', opts:['明顯更容易衝動、更難冷靜分析','稍微更容易衝動一點','大致還算冷靜，只是偶爾亂了分寸','明顯比平常更冷靜、更能理性判斷']},
+  {n:2, text:'最近做決定時，跟平常的你比起來：', opts:['明顯更容易衝動、更難冷靜分析','稍微更容易衝動一點','大致還算冷靜，只是偶爾亂了分寸','明顯比平常更冷靜、更能理性判斷']},
   {n:3, text:'最近跟人相處時，你發現自己：', opts:['很容易不耐煩，不太想理解別人的感受','稍微沒那麼有耐心聽別人說話','大致還是會顧慮別人，只是偶爾累了不想理','比平常更能感同身受，更願意花時間陪伴傾聽']},
   {n:4, text:'最近遇到問題卡關時，你發現自己：', opts:['完全想不出新方法，只能硬撐用老套路','想得到新方法，但需要花比較久時間','大致還是想得出辦法，只是沒那麼快','比平常更容易靈光一閃，想到意想不到的解法']},
   {n:5, text:'最近你把想法真正做完、做出成果的能力，跟平常比起來：', opts:['明顯拖延，很多事情想做卻沒做','稍微慢了一點，但還是有在推進','大致跟平常一樣，該做的事還是有做完','比平常更有效率，說到做到的比例更高']},
@@ -1649,6 +1666,10 @@ function showFlowCalendar(){
   }
   document.getElementById('flow-calendar-list').innerHTML = rows.join('');
   showScreen('s-flow-calendar');
+}
+// 專屬禮物：目前僅UI架子（建置中），體驗代碼驗證邏輯待金流系統確定後再接上
+function showGiftScreen(){
+  showScreen('s-gift');
 }
 
 function goS3mod(){
@@ -1932,7 +1953,9 @@ function renderS1(){
     document.getElementById('s1-npct').textContent=baseline.pct+'%';
   }
   if(dynamicSNR){
-    document.getElementById('s1-spct').innerHTML=dynamicSNR.index+'% <span style="font-size:0.5em;opacity:.75">('+dynamicSNR.sign+Math.abs(dynamicSNR.net).toFixed(1)+'點)</span>';
+    { const netAbs=Math.abs(dynamicSNR.net).toFixed(1);
+      const netHtml = (parseFloat(netAbs)===0) ? '' : ' <span style="font-size:0.5em;opacity:.75">('+dynamicSNR.sign+netAbs+'點)</span>';
+      document.getElementById('s1-spct').innerHTML=dynamicSNR.index+'%'+netHtml; }
   }
   document.getElementById('s1-snr-explain').textContent =
     (baseline&&dynamicSNR) ? (() => {
