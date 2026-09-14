@@ -208,6 +208,17 @@ svg#polar{width:100%;height:100%}
 .radar-blur{position:absolute;bottom:0;left:0;right:0;height:52%;background:linear-gradient(to top,var(--lt3) 30%,transparent);display:flex;align-items:flex-end;justify-content:center;padding-bottom:12px}
 .radar-lock{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;color:var(--lt-t3);border:1px solid var(--lt-b2);border-radius:20px;padding:6px 16px;background:var(--lt)}
 
+.dyn-row{margin-bottom:20px}
+.dyn-row-top{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.dyn-nm{font-family:var(--mono);font-size:10px;color:var(--lt-t2);min-width:64px;letter-spacing:.04em}
+.dyn-track{flex:1;position:relative;height:6px;background:var(--lt2);border-radius:3px}
+.dyn-dot-a{position:absolute;top:50%;width:9px;height:9px;border-radius:50%;background:var(--lt-b2);border:2px solid var(--lt3);transform:translate(-50%,-50%);z-index:1}
+.dyn-dot-b{position:absolute;top:50%;width:10px;height:10px;border-radius:50%;transform:translate(-50%,-50%);z-index:2;border:2px solid var(--lt3)}
+.dyn-dot-b.spike{background:var(--lt-rose)}
+.dyn-dot-b.collapse{background:var(--lt-indigo)}
+.dyn-dot-b.same{background:var(--lt-gold)}
+.dyn-note{font-size:11px;color:var(--lt-t3);line-height:1.6;margin-top:4px;margin-left:74px}
+
 /* ══════════════════════════════
    Stage 2（淺色）
 ══════════════════════════════ */
@@ -463,7 +474,22 @@ window.addEventListener('load', function(){
         <option value="deep">深度陪跑計畫</option>
       </select>
     </div>
-    <button class="btn-lt" onclick="goHook()">開始解碼 →</button>
+    <button class="btn-lt" onclick="goToQuestionnaireFirst()">開始解碼 →</button>
+  </div>
+</div>
+</div>
+
+<!-- ══ 動態SNR・五題問卷（首次填寫，姓名生日之後、Hook頁之前）══ -->
+<div class="screen lt-bg" id="s-dynamic-q" style="align-items:flex-start">
+<div class="wrap">
+  <div class="top-bar">
+    <button onclick="showScreen('s-input')" style="background:transparent;border:none;cursor:pointer;font-size:12px;color:var(--lt-t3);font-family:var(--mono);letter-spacing:.08em;padding:0;display:flex;align-items:center;gap:4px">← 上一步</button>
+    <span class="top-badge">在解碼之前 · 先說說你現在</span>
+  </div>
+  <div class="lt-card">
+    <p style="font-size:14px;color:var(--lt-t2);line-height:1.8;margin-bottom:20px">在揭曉你的頻率之前，先回答5題——這會讓等一下的結果，真正屬於「現在的你」，不只是冷冰冰的命盤。直覺選就好，不用想太久。</p>
+    <div id="dq-list"></div>
+    <button class="btn-lt" onclick="submitDynamicQ()" style="margin-top:16px">開始解碼 →</button>
   </div>
 </div>
 </div>
@@ -605,17 +631,18 @@ window.addEventListener('load', function(){
     <span class="top-badge">頻率座標 · 你是誰</span>
   </div>
 
-  <!-- SNR 揭露 -->
+  <!-- 動態SNR揭露：常態防線/訊噪比指數 -->
   <div class="snr-bridge fi" id="s1f0">
     <p class="snr-title">你的兩個數字——<br>這就是答案。</p>
     <div class="snr-pair">
-      <div class="snr-box snr-n"><span class="snr-big" id="s1-npct">—</span><span class="snr-lbl">常態防線（先天版）</span></div>
-      <div class="snr-box snr-s"><span class="snr-big" id="s1-spct">—</span><span class="snr-lbl">高壓失控（先天版）</span></div>
+      <div class="snr-box snr-n"><span class="snr-big" id="s1-npct">—</span><span class="snr-lbl">常態防線</span></div>
+      <div class="snr-box snr-s"><span class="snr-big" id="s1-spct">—</span><span class="snr-lbl">訊噪比指數<span style="opacity:.7">＊</span></span></div>
     </div>
     <p class="snr-explain" id="s1-snr-explain">—</p>
-    <p class="snr-next">→ 那個「另一個人」是誰？繼續往下看。</p>
+    <p style="font-size:11px;color:var(--lt-t3);margin-top:6px">訊噪比越高，代表你現在的樣子越貼近先天原本的你；越低，代表現在的你被推得離原本的樣子越遠。＊完整成因，決策神經解剖裡有解答</p>
   </div>
 
+  <!-- 先天六維（完整揭露，不隱藏，含個別說明與總結） -->
   <!-- DNA -->
   <div class="lt-card fi" id="s1f1">
     <span class="lt-lbl lbl-g">DNA · 本源驅力</span>
@@ -641,43 +668,19 @@ window.addEventListener('load', function(){
     <p class="motto-sub" id="s1-motto-sub">—</p>
   </div>
 
-  <!-- SNR 進度條 -->
-  <div class="lt-card fi" id="s1f4">
-    <span class="lt-lbl lbl-t">SNR · 頻率穩定指數</span>
-    <p class="lt-q" style="margin-bottom:12px">你有沒有感覺——大多數時候你是穩的，但有一個臨界點，一旦過了，連你自己都認不出來？</p>
-    <div class="snr-bar-row">
-      <span class="snr-bar-lbl" style="color:var(--lt-teal)">常態防線</span>
-      <div class="snr-bar-bg"><div class="snr-bar-fill" id="snr-n-bar" style="background:var(--lt-teal);width:0%"></div></div>
-      <span class="snr-pct" id="snr-n-pct-bar" style="color:var(--lt-teal)">—</span>
-    </div>
-    <div class="snr-bar-row">
-      <span class="snr-bar-lbl" style="color:var(--lt-rose)">高壓失控</span>
-      <div class="snr-bar-bg"><div class="snr-bar-fill" id="snr-s-bar" style="background:var(--lt-rose);width:0%"></div></div>
-      <span class="snr-pct" id="snr-s-pct-bar" style="color:var(--lt-rose)">—</span>
-    </div>
-    <p class="lt-sub" id="s1-snr-sub">—</p>
-    <p class="lt-hook">→ 這個循環怎麼斷？決策神經裡有完整解析。</p>
-  </div>
-
-  <!-- 六維預覽 -->
-  <div class="lt-card fi" id="s1f5">
-    <span class="lt-lbl lbl-g">六維識能雷達 · 預覽</span>
-    <p class="lt-q" style="margin-bottom:12px">你在六個方向上各有多強？有些你一直知道，有些你可能從來沒想過。</p>
-    <div class="radar-wrap" id="radar-preview">
-      <div id="radar-bars"></div>
-      <div class="radar-blur">
-        <div class="radar-lock">🔒 &nbsp;解鎖決策神經 · 查看完整數值與解析</div>
-      </div>
-    </div>
-    <p class="lt-hook" style="margin-top:38px">→ 每個維度背後的意義，在決策神經裡逐一說清楚。</p>
-  </div>
-
   <!-- 流年一句話 -->
   <div class="lt-card lt-card-i fi" id="s1f6">
     <span class="lt-lbl lbl-i" id="s1-year-lbl">流年 — 號 · 2026</span>
     <p class="lt-q" id="s1-year-q">—</p>
     <p class="lt-feel" id="s1-year-feel">—</p>
     <p class="lt-hook">→ 今年有槓桿的方向、費力的方向、還有一個你要留意的時刻——在決策神經裡。</p>
+  </div>
+
+  <!-- 先天六維（完整揭露，移至頁面下方，獨立成一個深度說明區塊） -->
+  <div class="lt-card fi" id="s1f6b">
+    <p class="lt-q" id="s1-sixdim-intro">—</p>
+    <div id="s1-sixdim-list" style="margin-top:14px"></div>
+    <p id="s1-sixdim-summary" style="font-size:13px;color:var(--lt-t2);line-height:1.85;margin-top:18px;padding-top:16px;border-top:1px solid var(--lt-b2)">—</p>
   </div>
 
   <div class="fi" id="s1f7" style="margin-top:8px">
@@ -743,6 +746,14 @@ window.addEventListener('load', function(){
     </div>
     <p style="font-size:11px;color:var(--lt-t3);margin-bottom:8px">上面這些傾向，具體反映在五個面向的強弱分布——</p>
     <div id="s2-radar-full"></div>
+  </div>
+
+  <!-- 先天vs現況六維對照（單條雙標記，2026/09/07新增） -->
+  <div class="lt-card" id="s2-dynamic-card">
+    <span class="lt-lbl">你的先天樣子，跟現在的樣子</span>
+    <p style="font-size:11px;color:var(--lt-t3);line-height:1.7;margin:6px 0 16px">每一條線上有兩個點——淺色是你天生的位置，深色是你現在被推動到的位置。兩點重疊，代表這裡沒有太大變化。</p>
+    <div id="s2-dynamic-list"></div>
+    <p id="s2-dynamic-summary" style="font-size:13px;color:var(--lt-t2);line-height:1.85;margin-top:18px;padding-top:16px;border-top:1px solid var(--lt-b2)">—</p>
   </div>
 
   <!-- 分組大標題：今年要注意什麼 -->
@@ -1203,7 +1214,192 @@ function calcSNRIndex(P,L,C,soul){
   const nPct = Math.max(30, Math.min(70, nPctRaw));
   const sPct = Math.max(30, Math.min(70, sPctRaw));
   const flip=Math.round(Math.abs(nPct-sPct)/10);
-  return{nPct,sPct,flip};
+  // nPct_calc/sPct_calc：計算版（未夾擠），供動態SNR系統B層位移計算專用，不可用展示版nPct/sPct
+  return{nPct,sPct,flip,nPct_calc:nPctRaw,sPct_calc:sPctRaw};
+}
+
+// ══════════════════════════════════════════════════════════════
+// 動態SNR系統（2026/09/07設計定案，完整說明見《識能所_動態SNR系統_核心設計說明書》）
+// ══════════════════════════════════════════════════════════════
+
+const SIX_DIM_SOUL_BASE = {
+  1:{P:5,L:5,E:3,C:8,X:8,V:6.5},
+  2:{P:8,L:5,E:8,C:5,X:5,V:5},
+  3:{P:5,L:3,E:5,C:8,X:5,V:8},
+  4:{P:5,L:8,E:5,C:5,X:8,V:5},
+  5:{P:5,L:3,E:5,C:8,X:5,V:5},
+  6:{P:5,L:5,E:8,C:5,X:8,V:5},
+  7:{P:8,L:8,E:5,C:5,X:3,V:5},
+  8:{P:5,L:8,E:5,C:6.5,X:8,V:8},
+  9:{P:8,L:6.5,E:8,C:8,X:5,V:8},
+};
+const SIX_DIM_PATH_BOOST = {
+  1:{X:1.5}, 2:{E:1.5}, 3:{C:1.5}, 4:{L:1.5}, 5:{C:1.5},
+  6:{E:1.5}, 7:{P:1.5}, 8:{L:1.5,X:1.0,V:1.0}, 9:{C:1.0,V:1.0},
+};
+const SIX_DIM_PRESSURE_MAP = {
+  1:{collapse:['P'],spike:['X','L']},
+  2:{collapse:['V'],spike:['E']},
+  3:{collapse:['X','L'],spike:['C']},
+  4:{collapse:['C','P'],spike:['L']},
+  5:{collapse:['X','L'],spike:['C']},
+  6:{collapse:['V'],spike:['E']},
+  7:{collapse:['X','E'],spike:['P']},
+  8:{collapse:['P','E'],spike:['L','X']},
+  9:{collapse:['X','E'],spike:['P','C']},
+};
+// 81組真實分布校準值（2026/09/07實測得出）
+const SIX_DIM_MEAN_RANGE = {min:5.42, max:7.83};
+// 2026/09/07再次校準（問卷/姓名學調整為5:5權重後，重新模擬912,384筆樣本）
+const CHAOS_DISTANCE_MAX = 11.67;
+const CHAOS_TIER_HIGH = 62; // 對應33百分位距離(4.40)換算的訊噪比指數門檻
+const CHAOS_TIER_LOW = 52;  // 對應67百分位距離(5.62)換算的訊噪比指數門檻
+
+const SIX_DIMS = ['P','L','E','C','X','V'];
+const SIX_DIM_LABELS = {P:'感知解析',L:'結構邏輯',E:'同理共鳴',C:'跨維躍遷',X:'現實產出',V:'價值對齊'};
+
+// 六維白話說明：依強弱區間給對應描述（強≥7.5／中5.5-7.5／弱<5.5）
+const SIX_DIM_DESC = {
+  P:{strong:'你對外界訊號、他人狀態的敏銳度很高，很多事情別人還沒說，你已經先感覺到了。', mid:'對周遭訊號的敏銳度中等，該注意到的通常不會漏掉，但不算特別突出。', weak:'感知外界訊號不是你天生特別敏銳的地方，你更習慣先做了再說。'},
+  L:{strong:'規劃跟系統化思考是你的強項，複雜的事到你手上，容易被拆解得有條有理。', mid:'規劃跟系統化思考對你來說不算吃力，中等偏上的水準。', weak:'嚴謹的邏輯推演不是你天生的舒適區，你更靠直覺跟臨場反應做事。'},
+  E:{strong:'你天生就容易理解、回應別人的情緒跟需求，這是你人際互動裡很自然的優勢。', mid:'同理別人的情緒，對你來說中等程度，需要時做得到，但不是隨時自動運作。', weak:'體察他人情緒不是你天生強項，你更專注在事情本身，容易忽略人的感受面。'},
+  C:{strong:'跨領域連結、開創新局，是你六維裡最亮眼的一塊，你天生就不怕打破既有框架。', mid:'跨領域連結、開創新局，對你來說中等程度，需要時做得到。', weak:'開創新局、大幅跳脫既有框架，不是你天生就會主動去做的事，你更擅長把既有的事情做穩做好。'},
+  X:{strong:'把想法變成實際成果，是你的天生強項，你是那種說到做到、很少讓事情停在紙上談兵的人。', mid:'把想法落地執行的能力中等，不算突出但也不弱。', weak:'把想法真正做完、產出成果，不是你天生最擅長的一塊，你更容易停留在構想或討論階段。'},
+  V:{strong:'你對自己所相信的方向，有很強的認同感跟自我價值感，很少因為外界質疑就輕易動搖。', mid:'對自己所信仰方向的認同感，中等偏穩定。', weak:'對自己方向的篤定程度，不是你天生就很強的地方，你可能容易因為外界聲音而重新懷疑自己。'},
+};
+function getSixDimLevel(val){ return val>=7.5?'strong':val>=5.5?'mid':'weak'; }
+function getSixDimDesc(d,val){ return SIX_DIM_DESC[d][getSixDimLevel(val)]; }
+
+// 六維總結：找出最強、最弱維度，組成一段人物側寫
+function buildSixDimSummary(dims){
+  const entries = Object.entries(dims).sort((a,b)=>b[1]-a[1]);
+  const top = entries[0], bottom = entries[entries.length-1];
+  const topLabel=SIX_DIM_LABELS[top[0]], bottomLabel=SIX_DIM_LABELS[bottom[0]];
+  return `把六個數字合在一起看，你最明顯的天賦落在「${topLabel}」這一塊——這是你六維裡最不費力就能展現出來的部分。相對地，「${bottomLabel}」是你六維裡相對安靜的一塊，不是你天生就會主動去做的事，但這不代表做不到，只是不是你的預設模式。但這只是你先天的樣子——這幾個數字，現在真正被推動到什麼位置、又是被什麼推動的，決策神經解剖裡才看得到完整答案。`;
+}
+
+// 找出先天vs姓名學位移後，落差最大的維度（用於Stage1訊噪比劇透句）
+function findMaxShiftDim(sixDimA, shiftedDims){
+  let maxDim=null, maxDiff=-1, direction=null;
+  for(const d of SIX_DIMS){
+    const diff = Math.abs(shiftedDims[d]-sixDimA[d]);
+    if(diff>maxDiff){ maxDiff=diff; maxDim=d; direction = shiftedDims[d]>sixDimA[d]?'spike':'collapse'; }
+  }
+  return {dim:maxDim, label:SIX_DIM_LABELS[maxDim], diff:maxDiff, direction};
+}
+
+function detectMasterNumber(birth){
+  const digits=[...birth.replace(/-/g,'')].map(Number);
+  let sum=digits.reduce((a,b)=>a+b,0);
+  const steps=[sum];
+  while(sum>9){ sum=[...String(sum)].map(Number).reduce((a,b)=>a+b,0); steps.push(sum); }
+  return steps.find(s=>s===11||s===22||s===33)||null;
+}
+function detectZeroEffect(birth){
+  const digits=[...birth.replace(/-/g,'')].map(Number);
+  let path=digits.reduce((a,b)=>a+b,0);
+  while(path>99){ path=[...String(path)].map(Number).reduce((a,b)=>a+b,0); }
+  return path%10===0 && path!==0;
+}
+
+// A層：先天六維
+function calcSixDimA(soul, pathUnit, birth){
+  const base = {...SIX_DIM_SOUL_BASE[soul]};
+  const boost = SIX_DIM_PATH_BOOST[pathUnit]||{};
+  const dims = {};
+  for(const d of SIX_DIMS){ dims[d] = base[d] + (boost[d]||0); }
+
+  const master = detectMasterNumber(birth);
+  const zero = detectZeroEffect(birth);
+  let amplified=false, amplifyTrigger=null, amplifyDims=[];
+  if(master || zero){
+    const entries = Object.entries(dims).sort((a,b)=>b[1]-a[1]);
+    amplifyDims = entries.slice(0,2).map(e=>e[0]);
+    for(const d of amplifyDims){ dims[d] = Math.min(10, dims[d]+1); }
+    amplified=true; amplifyTrigger = master ? ('卓越數'+master) : '數字0效應';
+  }
+  return {dims, amplified, amplifyTrigger, amplifyDims};
+}
+
+// 常態防線：純先天，六維平均分校準（2026/09/07定案）
+function calcBaselineStability(sixDimA){
+  const values = Object.values(sixDimA);
+  const mean = values.reduce((a,b)=>a+b,0)/values.length;
+  const ratio = Math.max(0, Math.min(1, (mean-SIX_DIM_MEAN_RANGE.min)/(SIX_DIM_MEAN_RANGE.max-SIX_DIM_MEAN_RANGE.min)));
+  return {mean, pct: Math.round(20 + ratio*70)};
+}
+
+// 姓名學助力位移（不封頂）
+function applyFavorShift(sixDimA, nPct_calc){
+  const entries = Object.entries(sixDimA).sort((a,b)=>b[1]-a[1]);
+  const topDims = entries.slice(0,2).map(e=>e[0]);
+  const magnitude = (nPct_calc/100)*3;
+  const shifted = {...sixDimA};
+  const notes=[];
+  for(const d of topDims){
+    shifted[d] = shifted[d] + magnitude;
+    if(shifted[d]>10) notes.push(SIX_DIM_LABELS[d]+'超出正常上限，代表此維度在助力情境下被撐到超乎先天的巔峰表現');
+  }
+  return {shifted, notes, topDims};
+}
+
+// 姓名學壓力位移（不封頂不封底）
+function applyPressureShift(sixDimA, soul, sPct_calc){
+  const map = SIX_DIM_PRESSURE_MAP[soul];
+  const magnitude = (sPct_calc/100)*3;
+  const shifted = {...sixDimA};
+  const notes=[];
+  for(const d of map.collapse){
+    shifted[d] = shifted[d] - magnitude;
+    if(shifted[d]<1) notes.push(SIX_DIM_LABELS[d]+'跌破正常下限，代表此維度在高壓下功能性崩潰，不只是變弱');
+  }
+  for(const d of map.spike){
+    shifted[d] = shifted[d] + magnitude;
+    if(shifted[d]>10) notes.push(SIX_DIM_LABELS[d]+'超出正常上限，代表此維度被高壓推向失控式超載，不是健康的強，是過載空轉');
+  }
+  return {shifted, notes};
+}
+
+// 問卷5題轉分數
+const QUESTIONNAIRE_DIM = {1:'P', 2:'L', 3:'E', 4:'C', 5:'X'};
+// 2026/09/07再次調整：Elena確認整體權重要5:5，問卷單題magnitude調整為±2.68，
+// 讓問卷理論最大值(√5×2.68≈6.00)與姓名學理論最大值(6.00，靈魂8/9)打平
+const QUESTIONNAIRE_SCORE = {'明顯變差':-2.68, '稍微變差':-0.89, '大致不變':0, '明顯變好':2.68};
+function applyQuestionnaireShift(sixDimA, answers){
+  const shifted = {...sixDimA};
+  const notes=[];
+  for(const qNum in answers){
+    const dim = QUESTIONNAIRE_DIM[qNum];
+    if(!dim) continue;
+    const score = QUESTIONNAIRE_SCORE[answers[qNum]] ?? 0;
+    shifted[dim] = shifted[dim] + score;
+    if(shifted[dim]>10) notes.push(SIX_DIM_LABELS[dim]+'超出正常上限，代表此維度近期被撐到超乎先天的巔峰表現');
+    if(shifted[dim]<1) notes.push(SIX_DIM_LABELS[dim]+'跌破正常下限，代表此維度近期功能性崩潰');
+  }
+  return {shifted, notes};
+}
+
+// 訊噪比指數：失控距離反轉（2026/09/07命名與方向定案）
+function calcSNRDynamicIndex(sixDimA, sixDimCurrent){
+  const diffs = SIX_DIMS.map(d => sixDimCurrent[d]-sixDimA[d]);
+  const distance = Math.sqrt(diffs.reduce((a,b)=>a+b*b,0));
+  const index = Math.max(0, Math.round(100 - (distance/CHAOS_DISTANCE_MAX)*100));
+  // 淨方向：六維落差不取平方、直接加總，正負號決定整體偏向撐高還是壓低
+  let net=0;
+  for(const d of SIX_DIMS){ net += sixDimCurrent[d]-sixDimA[d]; }
+  const sign = net>=0 ? '+' : '－';
+  let level;
+  if(index>=CHAOS_TIER_HIGH) level='訊號穩定';
+  else if(index>=CHAOS_TIER_LOW) level='雜訊介入';
+  else level='雜訊主導';
+  return {distance, index, level, sign, net, shifted:sixDimCurrent};
+}
+
+// 自評狀態指數
+function calcSelfReportIndex(answers){
+  let total=0;
+  for(const q in answers){ total += QUESTIONNAIRE_SCORE[answers[q]] ?? 0; }
+  return total;
 }
 
 function calcRadarDims(nums,soul,year){
@@ -1302,7 +1498,10 @@ function calcAll(name,birth){
   // YEAR_DB_V2
   const yd=YEAR_DB_V2[String(year)]||{};
 
-  Object.assign(ST,{name,birth,soul,path,year,pathUnit,pathTen,snr,coord,radarDims,sd,cy,fs,yd,nums});
+  // 動態SNR系統：A層先天六維
+  const sixDimA = calcSixDimA(soul, pathUnit, birth);
+
+  Object.assign(ST,{name,birth,soul,path,year,pathUnit,pathTen,snr,coord,radarDims,sd,cy,fs,yd,nums,sixDimA});
 }
 
 // ══════════════════════════════
@@ -1312,6 +1511,69 @@ function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   window.scrollTo(0,0);
+}
+
+// ── 動態SNR：問卷UI（首次填寫，姓名生日之後、Hook頁之前）──
+const DQ_QUESTIONS = [
+  {n:1, text:'最近你對周遭人事物的敏銳度，跟平常比起來：', opts:['變得很遲鈍，很多事後來才發現','稍微沒那麼敏銳','大致跟平常差不多，只是偶爾恍神','比平常更敏銳，很多細節都逃不過你']},
+  {n:2, text:'最近做決定時，跟平常的你比起來，你的冷靜分析能力如何：', opts:['明顯更容易衝動、更難冷靜分析','稍微更容易衝動一點','大致還算冷靜，只是偶爾亂了分寸','明顯比平常更冷靜、更能理性判斷']},
+  {n:3, text:'最近跟人相處時，你發現自己：', opts:['很容易不耐煩，不太想理解別人的感受','稍微沒那麼有耐心聽別人說話','大致還是會顧慮別人，只是偶爾累了不想理','比平常更能感同身受，更願意花時間陪伴傾聽']},
+  {n:4, text:'最近遇到問題卡關時，你發現自己：', opts:['完全想不出新方法，只能硬撐用老套路','想得到新方法，但需要花比較久時間','大致還是想得出辦法，只是沒那麼快','比平常更容易靈光一閃，想到意想不到的解法']},
+  {n:5, text:'最近你把想法真正做完、做出成果的能力，跟平常比起來：', opts:['明顯拖延，很多事情想做卻沒做','稍微慢了一點，但還是有在推進','大致跟平常一樣，該做的事還是有做完','比平常更有效率，說到做到的比例更高']},
+];
+const DQ_OPT_SCORE = ['明顯變差','稍微變差','大致不變','明顯變好'];
+
+function renderDynamicQ(){
+  const list = document.getElementById('dq-list');
+  list.innerHTML = DQ_QUESTIONS.map(q => `
+    <div style="margin-bottom:22px">
+      <p style="font-size:14px;color:var(--lt-t);font-weight:600;margin-bottom:10px">${q.n}. ${q.text}</p>
+      ${q.opts.map((opt,i)=>`
+        <label style="display:flex;align-items:center;gap:8px;padding:9px 4px;cursor:pointer;font-size:13px;color:var(--lt-t2)">
+          <input type="radio" name="dq${q.n}" value="${DQ_OPT_SCORE[i]}" style="accent-color:var(--lt-gold)"/>
+          ${opt}
+        </label>
+      `).join('')}
+    </div>
+  `).join('');
+}
+
+function goToQuestionnaireFirst(){
+  const name=document.getElementById('inp-name').value.trim();
+  const birth=document.getElementById('inp-birth').value;
+  if(!name||!birth){alert('請輸入姓名和生日');return;}
+  renderDynamicQ();
+  showScreen('s-dynamic-q');
+}
+
+function submitDynamicQ(){
+  const answers = {};
+  for(const q of DQ_QUESTIONS){
+    const checked = document.querySelector(`input[name="dq${q.n}"]:checked`);
+    if(!checked){ alert('請完成全部5題再送出'); return; }
+    answers[q.n] = checked.value;
+  }
+
+  const name=document.getElementById('inp-name').value.trim();
+  const birth=document.getElementById('inp-birth').value;
+  calcAll(name,birth);
+
+  // 動態SNR：套用問卷位移＋姓名學壓力位移，算出最終指標，存進ST供頻率座標/決策神經解剖頁使用
+  const baseline = calcBaselineStability(ST.sixDimA.dims);
+  const selfReport = calcSelfReportIndex(answers);
+  const {shifted:sixDimAfterQ, notes:qNotes} = applyQuestionnaireShift(ST.sixDimA.dims, answers);
+  const {shifted:sixDimAfterPressure, notes:pNotes} = applyPressureShift(ST.sixDimA.dims, ST.soul, ST.snr.sPct_calc);
+  // 現況六維＝問卷位移與姓名學位移共同疊加後的結果（不拆解，直接疊加）
+  const sixDimCurrent = {};
+  for(const d of SIX_DIMS){
+    sixDimCurrent[d] = ST.sixDimA.dims[d] + (sixDimAfterQ[d]-ST.sixDimA.dims[d]) + (sixDimAfterPressure[d]-ST.sixDimA.dims[d]);
+  }
+  // 訊噪比指數：必須用「已經疊加問卷+姓名學」的現況六維去算，不能只用姓名學單獨算
+  const dynamicSNR = calcSNRDynamicIndex(ST.sixDimA.dims, sixDimCurrent);
+  Object.assign(ST, {dqAnswers:answers, baseline, dynamicSNR, selfReport, sixDimCurrent, dynamicNotes:[...pNotes,...qNotes]});
+
+  showScreen('s-hook');
+  runHook();
 }
 
 function goHook(){
@@ -1334,11 +1596,9 @@ function goStar(){
 function goS1(){
   showScreen('s-s1');
   renderS1();
-  ['s1f0','s1f1','s1f2','s1f3','s1f4','s1f5','s1f6','s1f7'].forEach((id,i)=>{
+  ['s1f0','s1f1','s1f2','s1f3','s1f6','s1f6b','s1f7'].forEach((id,i)=>{
     setTimeout(()=>{const e=document.getElementById(id);if(e)e.classList.add('show');},80+i*110);
   });
-  // SNR 進度條動畫
-  setTimeout(()=>animSnrBars(),400);
 }
 
 function goS2(){showScreen('s-s2');renderS2();}
@@ -1475,7 +1735,7 @@ function runHook(){
     HK_UNIT[yi]||HK_UNIT[1],
     '事後連你自己都懊悔。',
     '',
-    `系統掃到你決策特質裡，高壓失控成分佔了 ${snr.sPct}%。`,
+    `系統掃到你的訊噪比是 ${ST.dynamicSNR?ST.dynamicSNR.index:snr.sPct}%。`,
     '這個數字背後，有一個你自己也感覺得到的時刻——',
     `「${blindShort}」`,
     '這往往是你困惑的根。',
@@ -1621,14 +1881,55 @@ function renderStar(){
 // Stage 1 渲染
 // ══════════════════════════════
 function renderS1(){
-  const{soul,path,year,sd,snr,coord,yd,cy}=ST;
+  const{soul,path,year,sd,snr,coord,yd,cy,sixDimA,baseline,dynamicSNR}=ST;
   const pathUnit=coord.isDiag?soul:path%10;
 
-  // SNR 揭露
-  document.getElementById('s1-npct').textContent=snr.nPct+'%';
-  document.getElementById('s1-spct').textContent=snr.sPct+'%';
-  document.getElementById('s1-snr-explain').textContent=
-    `你的決策特質組成裡，穩定成分佔${snr.nPct}%——這是你平常展現出來的沉著程度。另外，你的決策特質組成裡，有${snr.sPct}%的成分屬於「壓力大時容易被情緒或衝動主導」的類型——這代表你面對高壓情境時，系統性地比較難維持冷靜、穩定的判斷，不是意志力不夠，是天生的組成結構容易被這些成分主導。這是你81種頻率座標裡的「先天起始點」，描述的是你天生的傾向與起點，不是無法改變的宿命——透過覺察自己在什麼情境下容易被這些成分主導、練習在情緒升起的當下先暫停一步再反應，這個傾向是可以隨時間鬆動、調整的。（這兩個數字分別衡量不同面向的組成佔比，不是同一件事的正反面，也不會、不需要加起來是100%）`;
+  // 動態SNR揭露：常態防線（六維平均分版）/ 訊噪比指數（先天vs姓名學位移落差反轉）
+  if(baseline){
+    document.getElementById('s1-npct').textContent=baseline.pct+'%';
+  }
+  if(dynamicSNR){
+    document.getElementById('s1-spct').innerHTML=dynamicSNR.index+'% <span style="font-size:0.5em;opacity:.75">('+dynamicSNR.sign+Math.abs(dynamicSNR.net).toFixed(1)+'點)</span>';
+  }
+  document.getElementById('s1-snr-explain').textContent =
+    (baseline&&dynamicSNR) ? (() => {
+      const shift = findMaxShiftDim(sixDimA.dims, dynamicSNR.shifted);
+      // 劇透句語氣依訊噪比分級調整強度，避免「整體穩定」卻搭配「嚴重失控」用詞的矛盾
+      let shiftDesc;
+      if(dynamicSNR.level==='訊號穩定'){
+        shiftDesc = shift.direction==='spike'
+          ? `你天生的「${shift.label}」能力，最近稍微比平常更用力一點。`
+          : `你天生的「${shift.label}」能力，最近稍微沒那麼容易發揮出來。`;
+      } else if(dynamicSNR.level==='雜訊介入'){
+        shiftDesc = shift.direction==='spike'
+          ? `你天生的「${shift.label}」能力，最近有點被拉往一個不太尋常的方向，跟平常的你不太一樣。`
+          : `你天生的「${shift.label}」能力，最近有點發揮不出來，跟平常的你不太一樣。`;
+      } else {
+        shiftDesc = shift.direction==='spike'
+          ? `你天生的「${shift.label}」能力，最近被推向了一個不太健康的極端，不是你想像中的「變強」，反而更像是過載空轉。`
+          : `你天生的「${shift.label}」能力，最近好像被壓住了、發揮不出來。`;
+      }
+      return `你平常展現出來的沉著程度，大概落在${baseline.pct}%這個水準——不算特別突出，但也不算薄弱，是一個中等偏溫和的底子。另一個數字，訊噪比只有${dynamicSNR.index}%，偏向「${dynamicSNR.level}」——${shiftDesc}這不是固定不變的，可以透過方法慢慢調整回來——完整的來龍去脈、還有其他維度的變化，決策神經解剖裡才會攤開講。`;
+    })() : '—';
+
+  // 先天六維（完整揭露，移至頁面下方，不用「先天六維」「總結」這類標籤字眼，以過渡敘事帶入）
+  if(sixDimA){
+    document.getElementById('s1-sixdim-intro').textContent =
+      '你的敏銳、你的理性、你怎麼跟人相處、你怎麼開創、你怎麼把事情做完、你怎麼看待自己相信的東西——這六個面向，合起來，就是你原本的樣子。';
+    document.getElementById('s1-sixdim-list').innerHTML = SIX_DIMS.map(d=>{
+      const val=sixDimA.dims[d];
+      const pct=Math.min(100,Math.max(0,val*10));
+      return `<div style="margin-bottom:16px">
+        <div class="radar-row">
+          <span class="radar-nm" style="color:var(--lt-t2)">${SIX_DIM_LABELS[d]}</span>
+          <div class="radar-bg"><div class="radar-fill" style="width:${pct}%"></div></div>
+          <span class="radar-pct">${val.toFixed(1)}</span>
+        </div>
+        <p style="font-size:12px;color:var(--lt-t3);line-height:1.7;margin-top:4px">${getSixDimDesc(d,val)}</p>
+      </div>`;
+    }).join('');
+    document.getElementById('s1-sixdim-summary').textContent = buildSixDimSummary(sixDimA.dims);
+  }
 
   // DNA
   const si=((soul-1)%9)+1;
@@ -1646,39 +1947,10 @@ function renderS1(){
   document.getElementById('s1-motto').textContent=sd.motto||'—';
   document.getElementById('s1-motto-sub').textContent=(sd.sn||'—')+' · 座標 ('+soul+','+(coord.isDiag?soul:pathUnit)+')';
 
-  // SNR 說明
-  document.getElementById('s1-snr-sub').textContent=
-    `壓力下你會${HK_UNIT[((pathUnit-1)%9)+1]||'—'}這個循環你不陌生——但你可能還不清楚它從哪裡來。`;
-
-  // 六維預覽（只顯示前三維，後三維遮擋）
-  const dims=ST.radarDims;
-  const radarHtml=dims.map((d,i)=>{
-    const pct=d.val*20;
-    return `<div class="radar-row">
-      <span class="radar-nm">${d.label}</span>
-      <div class="radar-bg"><div class="radar-fill" style="width:${pct}%"></div></div>
-      <span class="radar-pct">${pct}%</span>
-    </div>`;
-  }).join('');
-  document.getElementById('radar-bars').innerHTML=radarHtml;
-
   // 流年一句話（用 COORD_YEAR_DB t1）
   document.getElementById('s1-year-lbl').textContent='流年 '+ST.year+' 號 · 2026';
   document.getElementById('s1-year-q').textContent=cy.t1||yd.B||'今年有個東西在推著你。';
   document.getElementById('s1-year-feel').textContent=cy.t2||'這不是意外。今年的能量方向，已經寫在你的頻率裡了。';
-}
-
-function animSnrBars(){
-  const{snr}=ST;
-  let n=0,s=0;
-  const tm=setInterval(()=>{
-    n=Math.min(n+1,snr.nPct);s=Math.min(s+1,snr.sPct);
-    document.getElementById('snr-n-bar').style.width=n+'%';
-    document.getElementById('snr-s-bar').style.width=s+'%';
-    document.getElementById('snr-n-pct-bar').textContent=n+'%';
-    document.getElementById('snr-s-pct-bar').textContent=s+'%';
-    if(n>=snr.nPct&&s>=snr.sPct) clearInterval(tm);
-  },12);
 }
 
 // ══════════════════════════════
@@ -1759,6 +2031,49 @@ function renderS2(){
     </div>
     <div style="font-size:11px;color:var(--lt-t3);margin:-6px 0 10px 86px;line-height:1.5">${d.desc}</div>`;
   }).join('');
+
+  // 先天vs現況六維對照（單條雙標記，只在有變化的維度加註解）
+  if(ST.sixDimA && ST.sixDimCurrent){
+    document.getElementById('s2-dynamic-list').innerHTML = SIX_DIMS.map(d=>{
+      const before = ST.sixDimA.dims[d];
+      const after = ST.sixDimCurrent[d];
+      const diff = after - before;
+      const beforePct = Math.min(100,Math.max(0,before*10));
+      const afterPct = Math.min(100,Math.max(0,after*10));
+      const dotClass = Math.abs(diff)<0.3 ? 'same' : (diff>0 ? 'spike' : 'collapse');
+      let note = '';
+      if(Math.abs(diff)>=0.3){
+        if(after>10) note = `這裡被推向了超乎先天的巔峰表現，不一定是壞事，但值得留意是不是過度用力。`;
+        else if(after<1) note = `這裡明顯發揮不出來，跟你先天的樣子有不小的落差。`;
+        else if(diff>0) note = `現在比先天的你更用力一點，往上偏了${diff.toFixed(1)}分。`;
+        else note = `現在比先天的你發揮得少一點，往下偏了${Math.abs(diff).toFixed(1)}分。`;
+      }
+      return `<div class="dyn-row">
+        <div class="dyn-row-top">
+          <span class="dyn-nm">${SIX_DIM_LABELS[d]}</span>
+          <div class="dyn-track">
+            <div class="dyn-dot-a" style="left:${beforePct}%"></div>
+            <div class="dyn-dot-b ${dotClass}" style="left:${afterPct}%"></div>
+          </div>
+        </div>
+        ${note ? `<p class="dyn-note">${note}</p>` : ''}
+      </div>`;
+    }).join('');
+
+    // 小結論：找出變化最大的維度，講一句具體的話
+    const allDiffs = SIX_DIMS.map(d => ({dim:d, diff:ST.sixDimCurrent[d]-ST.sixDimA.dims[d]}));
+    allDiffs.sort((a,b)=>Math.abs(b.diff)-Math.abs(a.diff));
+    const biggest = allDiffs[0];
+    let summaryText;
+    if(Math.abs(biggest.diff)<0.3){
+      summaryText = '整體來看，你現在的樣子跟先天的你相當接近，沒有哪個面向被明顯推動。';
+    } else if(biggest.diff>0){
+      summaryText = `整體來看，變化最明顯的是「${SIX_DIM_LABELS[biggest.dim]}」——這是你現在被推得最用力的地方，值得你留意這股力量從哪裡來、是不是該收一點。`;
+    } else {
+      summaryText = `整體來看，變化最明顯的是「${SIX_DIM_LABELS[biggest.dim]}」——這是你現在被壓得最緊的地方，值得你留意是什麼在讓它發揮不出來。`;
+    }
+    document.getElementById('s2-dynamic-summary').textContent = summaryText;
+  }
 
 
   // ⑦ 能量漏洞
