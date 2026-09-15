@@ -639,7 +639,7 @@ window.addEventListener('load', function(){
       <div class="snr-box snr-s"><span class="snr-big" id="s1-spct">—</span><span class="snr-lbl">訊噪比指數<span style="opacity:.7">＊</span></span></div>
     </div>
     <p class="snr-explain" id="s1-snr-explain">—</p>
-    <p style="font-size:11px;color:var(--lt-t3);margin-top:6px">訊噪比越高，代表你現在的樣子越貼近先天原本的你；越低，代表現在的你被推得離原本的樣子越遠。後面括號裡的點數，代表你現在整體被往上推、還是被往下壓的幅度——數字越大，代表這股推力越明顯。＊完整成因，決策神經解剖裡有解答</p>
+    <p style="font-size:11px;color:var(--lt-t3);margin-top:6px">訊噪比越高，代表你現在的能量輸出越純粹、干擾越少——同樣的力氣，換到的成果越好。後面括號裡的點數，代表這股干擾目前把你往哪個方向推、推了多少——正負0代表目前沒有明顯的單一方向，數字越大代表這股推力越明顯。＊完整成因，決策神經解剖裡有解答</p>
   </div>
 
   <!-- 先天六維（完整揭露，不隱藏，含個別說明與總結） -->
@@ -1954,7 +1954,7 @@ function renderS1(){
   }
   if(dynamicSNR){
     { const netAbs=Math.abs(dynamicSNR.net).toFixed(1);
-      const netHtml = (parseFloat(netAbs)===0) ? '' : ' <span style="font-size:0.5em;opacity:.75">('+dynamicSNR.sign+netAbs+'點)</span>';
+      const netHtml = ' <span style="font-size:0.5em;opacity:.75">('+(parseFloat(netAbs)===0 ? '±0' : dynamicSNR.sign+netAbs)+'點)</span>';
       document.getElementById('s1-spct').innerHTML=dynamicSNR.index+'%'+netHtml; }
   }
   document.getElementById('s1-snr-explain').textContent =
@@ -1975,7 +1975,7 @@ function renderS1(){
           ? `你天生的「${shift.label}」能力，最近被推向了一個不太健康的極端，不是你想像中的「變強」，反而更像是過載空轉。`
           : `你天生的「${shift.label}」能力，最近好像被壓住了、發揮不出來。`;
       }
-      return `你平常展現出來的沉著程度，大概落在${baseline.pct}%這個水準——不算特別突出，但也不算薄弱，是一個中等偏溫和的底子。另一個數字，訊噪比只有${dynamicSNR.index}%，偏向「${dynamicSNR.level}」——${shiftDesc}這不是固定不變的，可以透過方法慢慢調整回來——完整的來龍去脈、還有其他維度的變化，決策神經解剖裡才會攤開講。`;
+      return `你的底子，也就是你平常展現出來的沉著程度，大概落在${baseline.pct}%這個水準——不算特別突出，但也不算薄弱，是一個中等偏溫和的底子。另一個數字，偵測到你最近的訊號輸出，訊噪比SNR是${dynamicSNR.index}%，偏向「${dynamicSNR.level}」——${shiftDesc}這不是固定不變的，可以透過方法慢慢調整回來——完整的來龍去脈、還有其他維度的變化，決策神經解剖裡才會攤開講。`;
     })() : '—';
 
   // 先天六維（完整揭露，移至頁面下方，不用「先天六維」「總結」這類標籤字眼，以過渡敘事帶入）
